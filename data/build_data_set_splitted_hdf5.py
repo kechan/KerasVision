@@ -8,7 +8,6 @@ from shutil import copyfile
 
 from data_util import *
 
-SIZE = 64
 
 description = """Description:\n
 Split and resize dataset to output hdf5\
@@ -54,10 +53,8 @@ if __name__ == '__main__':
 
     data_dir = args.data_dir
     output_dir = args.output_dir
-    classes = args.classes
+    classes = process_classes(args.classes)
     size = int(args.resize)
-
-    classes = process_classes(classes)
 
     if not os.path.exists(args.output_dir):
         os.mkdir(args.output_dir)
