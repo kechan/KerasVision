@@ -40,6 +40,26 @@ parser.add_argument('--data_dir', default='data/64x64_SIGNS',
 parser.add_argument('--restore_from', default=None,
                     help="Optional, directory or file containing weights to reload before training")
 
+
+def create_indice_to_classes_dictionary(classes):
+    '''
+    Input example: 
+    		['cat', 'non-cat']
+
+    Output example:
+    		['0': 'cat', '1': 'nont-cat']
+
+    '''
+
+    assert type(classes) == list, "classes is not a list"
+    assert len(classes) > 1 and type(classes[0]) == str, "number of classes must be bigger than 1 and must be a string"
+
+    indice_classes = {}
+    for i, c in enumerate(classes):
+        indice_classes[str(i)] = c
+
+    return indice_classes
+
 def plot(history, model_dir, params):
     acc = history['acc']
     val_acc = history['val_acc']
@@ -113,7 +133,7 @@ if __name__ == '__main__':
         logging.info("\tdev_set_y: " + str(dev_set_y.shape))
         logging.info("\ttest_set_y: " + str(test_set_y.shape))
 
-    elif params.data_format == 'splitted_dirs':    # Use Keras generator
+    elif params.data_format == 'splitted_dirs':    # Using Keras generator
 
         classes = params.classes
 	configure_generator(data_dir, params)
@@ -121,14 +141,14 @@ if __name__ == '__main__':
     else:
         print("Other data input format") 
 
-    indice_classes = {}
-    for i, c in enumerate(classes):
-        indice_classes[str(i)] = c
+    indice_classes = create_indice_to_classes_dictionary(classes)
 
     logging.info("\tlabel/target to class mappings: " + str(indice_classes))
 
     if params.model_type == "logistic_regression" or params.model_type == "feedforward":
-        from preprocessing.feedforward import preprocess
+
+        from preprocessing.feedforward import preprocess   # Flatten, normalize, and one-hot targets
+
 	train_set_x, train_set_y, dev_set_x, dev_set_y, test_set_x, test_set_y = preprocess(train_set_x, train_set_y, dev_set_x, dev_set_y, test_set_x, test_set_y)
 
 	logging.info("Using preprocessing.feedforward.preprocess")
@@ -143,7 +163,6 @@ if __name__ == '__main__':
 
     # Define the model
     logging.info("Creating the model...")
-    
       
     # if restore, get it from the pre-existing .h5
     model = None
@@ -163,6 +182,7 @@ if __name__ == '__main__':
 	    dim = train_set_x.shape[1]
 
 	if params.model_type == "logistic_regression" or params.model_type == "feedforward":
+
             if params.model_type == "logistic_regression":
 	        from model.logistic_regression import build_model
 	    elif params.model_type == "feedforward":
@@ -170,9 +190,9 @@ if __name__ == '__main__':
 
 	    model = build_model(input_shape=(dim,), nb_classes=len(indice_classes), params=params)
 
-	elif params.model_type == "convnet":
-	    from model.convnet.chollet import build_model
+	elif params.model_type == "convnet.chollet":
 
+	    from model.convnet.chollet import build_model
             model = build_model(input_shape=(dim,dim,3), nb_classes=len(indice_classes), params=params)
 
 

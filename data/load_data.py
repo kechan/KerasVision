@@ -40,7 +40,8 @@ def from_splitted_hdf5(data_dir):
 
 
 
-def from_single_hdf5(height=224, width=224):
+def from_single_hdf5(data_dir):
 
-    outfile_path = "train_coin_" + str(height) + "_" + str(width) + ".hdf5"
-    train_set_x, train_set_y, dev_set_x, dev_set_y, test_set_x, test_set_y, classes = load_all_data(outfile_path)
+    hdf5_file = glob.glob(os.path.join(data_dir, "*.hdf5")[0]
+
+    train_set_x, train_set_y, dev_set_x, dev_set_y, test_set_x, test_set_y, classes = load_all_data(hdf5_file)
