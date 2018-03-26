@@ -42,6 +42,6 @@ def from_splitted_hdf5(data_dir):
 
 def from_single_hdf5(data_dir):
 
-    hdf5_file = glob.glob(os.path.join(data_dir, "*.hdf5")[0]
+    hdf5_file = glob.glob(os.path.join(data_dir, "*.hdf5"))[0]
 
     train_set_x, train_set_y, dev_set_x, dev_set_y, test_set_x, test_set_y, classes = load_all_data(hdf5_file)
