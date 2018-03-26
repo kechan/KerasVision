@@ -4,7 +4,7 @@ from keras.layers import Dense, Conv2D, MaxPooling2D, Flatten, Dropout
 def build_model(input_shape=(224, 224, 3), nb_classes=6, params=None):
     ''' Convnet as introduced in chapter 5 of Chollet's book
     '''
-    ''' CP-CP-CP-CP-FC-FC
+    ''' CP-CP-CP-CP-(DO)-FC-FC
     '''
 
     model = Sequential()

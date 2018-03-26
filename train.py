@@ -10,8 +10,11 @@ import pickle
 
 import tensorflow as tf
 import keras
+import numpy as np
 
 from utils import Params
+import params_extension
+
 from utils import set_logger
 from utils import save_dict_to_json
 
@@ -47,12 +50,13 @@ def create_indice_to_classes_dictionary(classes):
     		['cat', 'non-cat']
 
     Output example:
-    		['0': 'cat', '1': 'nont-cat']
+    		['0': 'cat', '1': 'non-cat']
 
     '''
 
-    assert type(classes) == list, "classes is not a list"
-    assert len(classes) > 1 and (type(classes[0]) == str or type(classes[0]) == unicode), "number of classes must be bigger than 1 and must be a string"
+    assert type(classes) == list or type(classes) == np.ndarray, "classes is not a list or np.ndarray"
+    print(type(classes[0]))
+    assert len(classes) > 1 and (type(classes[0]) == str or type(classes[0]) == unicode or type(classes[0]) == np.string_), "number of classes must be bigger than 1 and must be a string"
 
     indice_classes = {}
     for i, c in enumerate(classes):
@@ -105,6 +109,8 @@ if __name__ == '__main__':
     json_path = os.path.join(model_dir, 'params.json')
     assert os.path.isfile(json_path), "No json configuration file found at {}".format(json_path)
     params = Params(json_path)
+    # Validate on params
+    params.validate()
 
     # Check that we are not overwriting some previous experiment
     # Comment these lines if you are developing your model and don't care about overwritting

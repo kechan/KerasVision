@@ -1,0 +1,7 @@
+numpy
+Keras>=2.1.4
+pickle
+Pillow
+tensorflow>=1.5
+tabulate
+tqdm
