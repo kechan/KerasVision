@@ -61,6 +61,8 @@ def create_indice_to_classes_dictionary(classes):
     return indice_classes
 
 def plot(history, model_dir, params):
+    import matplotlib.pyplot as plt
+
     acc = history['acc']
     val_acc = history['val_acc']
     loss = history['loss']
@@ -68,6 +70,7 @@ def plot(history, model_dir, params):
 
     epochs = range(len(acc))
 
+    # Plotting Accuracy vs Epoch curve
     plt.figure(figsize=(8, 8))
 
     plt.plot(epochs, acc, 'bo', label='Training acc')
@@ -77,7 +80,7 @@ def plot(history, model_dir, params):
 
     plt.savefig(os.path.join(model_dir, "acc.png"))
 
-
+    # Plotting Loss vs Epoch curve
     plt.figure(figsize=(8, 8))
 
     plt.plot(epochs, loss, 'bo', label='Training loss')
@@ -193,7 +196,7 @@ if __name__ == '__main__':
 	elif params.model_type == "convnet.chollet":
 
 	    from model.convnet.chollet import build_model
-            model = build_model(input_shape=(dim,dim,3), nb_classes=len(indice_classes), params=params)
+            model = build_model(input_shape=(dim, dim, 3), nb_classes=len(indice_classes), params=params)
 
 
     logging.info("Input: " + str(model.inputs))
@@ -248,13 +251,7 @@ if __name__ == '__main__':
 
     # put an end marker to the log
     logging.info("########################## THE END ##########################")
-	
-
-    import matplotlib.pyplot as plt
 
     plot(history, model_dir, params)
-
-
-
     
 
