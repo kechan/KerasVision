@@ -52,7 +52,7 @@ def create_indice_to_classes_dictionary(classes):
     '''
 
     assert type(classes) == list, "classes is not a list"
-    assert len(classes) > 1 and type(classes[0]) == str, "number of classes must be bigger than 1 and must be a string"
+    assert len(classes) > 1 and (type(classes[0]) == str or type(classes[0]) == unicode), "number of classes must be bigger than 1 and must be a string"
 
     indice_classes = {}
     for i, c in enumerate(classes):
