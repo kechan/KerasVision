@@ -9,8 +9,11 @@ def configure_generator(data_dir, params):
     size = params.image_size
     classes = params.classes
     batch_size = params.batch_size
-    
-    train_datagen = ImageDataGenerator(rescale=1./255)    # image rescale
+
+    train_datagen_args = dict(rescale=1./255)
+    assign_more_params(train_datagen_args, params)
+
+    train_datagen = ImageDataGenerator(**train_datagen_args)    # image rescale
     test_datagen = ImageDataGenerator(rescale=1./255)
 
     # checking up on data directories
@@ -37,3 +40,31 @@ def configure_generator(data_dir, params):
  
     params.train_generator = train_generator
     params.validation_generator = validation_generator
+
+def configure_generator(train_set_x, train_set_y, dev_set_x, dev_set_y, params):
+
+    classes = params.classes
+    batch_size = params.batch_size
+
+    train_datagen_args = dict(rescale=1./255)
+    assign_more_params(train_datagen_args, params)
+
+    train_datagen = ImageDataGenerator(**train_datagen_args)    # image rescale
+    test_datagen = ImageDataGenerator(rescale=1./255)
+
+    train_generator = train_datagen.flow(train_set_x, train_set_y, batch_size=batch_size)
+
+    validation_generator = test_datagen.flow(dev_set_x, dev_set_y, batch_size=batch_size)
+
+    params.train_generator = train_generator
+    params.validation_generator = validation_generator
+
+
+def assign_more_params(train_datagen_args, params):
+
+    aug_params = ["rotation_range", "width_shift_range", "height_shift_range", "shear_range", "zoom_range"]
+
+    for aug_param in aug_params:
+        if hasattr(params, aug_param):
+            value = params.dict[aug_param]
+            train_datagen_args[aug_param] = value 

@@ -25,6 +25,8 @@ from model.compiler import compile_model
 from model.training import train_and_evaluate_with_fit
 from model.training import train_and_evaluate_with_fit_generator
 
+from preprocessing.general import one_hot_encode_y
+
 
 description = """Kick off training by reading from model_dir (with params.json) and data_dir\n
 E.g. \n
@@ -118,6 +120,8 @@ if __name__ == '__main__':
     overwritting = model_dir_has_best_weights and args.restore_from is None
     assert not overwritting, "Weights found in model_dir, aborting to avoid overwrite"
 
+    model_loaded_from_archive = False
+
     # Set the logger
     set_logger(os.path.join(args.model_dir, 'train.log'))
 
@@ -142,6 +146,13 @@ if __name__ == '__main__':
         logging.info("\tdev_set_y: " + str(dev_set_y.shape))
         logging.info("\ttest_set_y: " + str(test_set_y.shape))
 
+	train_set_y, dev_set_y, test_set_y = one_hot_encode_y(train_set_y, dev_set_y, test_set_y)
+
+	if hasattr(params, "use_data_gen") and params.use_data_gen == "true":
+	   logging.info("Using data generator .flow")  
+           configure_generator(train_set_x, train_set_y, dev_set_x, dev_set_y, params)
+
+
     elif params.data_format == 'splitted_dirs':    # Using Keras generator
 
         classes = params.classes
@@ -153,6 +164,7 @@ if __name__ == '__main__':
     indice_classes = create_indice_to_classes_dictionary(classes)
 
     logging.info("\tlabel/target to class mappings: " + str(indice_classes))
+
 
     if params.model_type == "logistic_regression" or params.model_type == "feedforward":
 
@@ -182,6 +194,7 @@ if __name__ == '__main__':
 
 	    logging.info("loading model from existing .h5")
 	    model = load_model(model_h5)
+	    model_loaded_from_archive = True
         
     if model is None:     
 
@@ -209,7 +222,8 @@ if __name__ == '__main__':
     model.summary(print_fn=logging.info)
 
     # .compile
-    compile_model(model, params)
+    if not model_loaded_from_archive:   # don't recompile if loaded from *weights*.h5 or lose opt-zer states.
+        compile_model(model, params)
 
     # configure callbacks
     # 1) checkpoints: save the best dev/val loss weights
@@ -231,9 +245,14 @@ if __name__ == '__main__':
         model_lr_callback
     ] 
 
-    # .fit
+    # .fit**
     if params.data_format == 'splitted_hdf5':
-        history = train_and_evaluate_with_fit(model, train_set_x, train_set_y, dev_set_x, dev_set_y, params, callbacks_list)
+
+        if hasattr(params, "use_data_gen") and params.use_data_gen == "true":
+            history = train_and_evaluate_with_fit_generator(model, params, callbacks_list)
+	else:
+            history = train_and_evaluate_with_fit(model, train_set_x, train_set_y, dev_set_x, dev_set_y, params, callbacks_list)
+
     elif params.data_format == 'splitted_dirs':
         history = train_and_evaluate_with_fit_generator(model, params, callbacks_list)
 
@@ -253,7 +272,7 @@ if __name__ == '__main__':
         pickle.dump(history, f)
 
     # save model and weights
-    model.save(os.path.join(model_dir, "model_and_weights.h5"))
+    model.save(os.path.join(model_dir, "model_and_weights.h5"), overwrite=True, include_optimizer=True)
 
     # put an end marker to the log
     logging.info("########################## THE END ##########################")

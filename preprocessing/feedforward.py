@@ -1,7 +1,7 @@
 from keras.utils import to_categorical
 
 def preprocess(train_set_x, train_set_y, dev_set_x, dev_set_y, test_set_x, test_set_y):
-    ''' return flatten and normalize input X and one-hot encoding Y for train, dev, and test set.
+    ''' return flatten and normalize input X for train, dev, and test set.
 
     Assumptions:
     
@@ -45,11 +45,6 @@ def preprocess(train_set_x, train_set_y, dev_set_x, dev_set_y, test_set_x, test_
     train_set_x = train_set_x.astype('float32') / 255.
     dev_set_x = dev_set_x.astype('float32') / 255.
     test_set_x = test_set_x.astype('float32') / 255.
-
-    # one-hot encoding of Y
-    train_set_y = to_categorical(train_set_y)
-    dev_set_y = to_categorical(dev_set_y)
-    test_set_y = to_categorical(test_set_y)
 
     return train_set_x, train_set_y, dev_set_x, dev_set_y, test_set_x, test_set_y
 
