@@ -4,7 +4,7 @@ from numpy.random import seed
 
 import argparse
 import logging
-import os
+import os, shutil, glob
 import random
 import pickle
 
@@ -57,7 +57,7 @@ def create_indice_to_classes_dictionary(classes):
     '''
 
     assert type(classes) == list or type(classes) == np.ndarray, "classes is not a list or np.ndarray"
-    print(type(classes[0]))
+    #print(type(classes[0]))
     assert len(classes) > 1 and (type(classes[0]) == str or type(classes[0]) == unicode or type(classes[0]) == np.string_), "number of classes must be bigger than 1 and must be a string"
 
     indice_classes = {}
@@ -148,10 +148,12 @@ if __name__ == '__main__':
 
 	train_set_y, dev_set_y, test_set_y = one_hot_encode_y(train_set_y, dev_set_y, test_set_y)
 
-	if hasattr(params, "use_data_gen") and params.use_data_gen == "true":
+	if hasattr(params, "use_data_gen") and params.use_data_gen:
 	   logging.info("Using data generator .flow")  
            configure_generator(train_set_x, train_set_y, dev_set_x, dev_set_y, params)
 
+        params.train_sample_size = len(train_set_y)
+	params.validation_sample_size = len(dev_set_y)
 
     elif params.data_format == 'splitted_dirs':    # Using Keras generator
 
@@ -222,13 +224,28 @@ if __name__ == '__main__':
     model.summary(print_fn=logging.info)
 
     # .compile
+    model_recompiled = False
     if not model_loaded_from_archive:   # don't recompile if loaded from *weights*.h5 or lose opt-zer states.
         compile_model(model, params)
+	model_recompiled = True
+
+    if not model_recompiled and hasattr(params, "always_recompile") and params.always_recompile:
+        compile_model(model, params)
+	model_recompiled = True
+
+    if model_recompiled:
+        logging.info("Model is re-compiled (or compiled first time).")
 
     # configure callbacks
     # 1) checkpoints: save the best dev/val loss weights
+
+    # prepare weights dir to save the .h5 weights.
+    num_weight_dirs = len(glob.glob(os.path.join(model_dir, "weights*")))
+    weights_dir = os.path.join(model_dir, "weights_" + str(num_weight_dirs+1))
+    os.mkdir(weights_dir)
+
     model_checkpt_callback = keras.callbacks.ModelCheckpoint(
-                                                    filepath=os.path.join(model_dir, "weights.h5"),
+                                                    filepath=os.path.join(weights_dir, "weights.{epoch:02d}-{val_loss:.2f}.h5"),
 	                                            monitor='val_loss',
 	                                            save_best_only=True
 						   )
@@ -248,7 +265,7 @@ if __name__ == '__main__':
     # .fit**
     if params.data_format == 'splitted_hdf5':
 
-        if hasattr(params, "use_data_gen") and params.use_data_gen == "true":
+        if hasattr(params, "use_data_gen") and params.use_data_gen:
             history = train_and_evaluate_with_fit_generator(model, params, callbacks_list)
 	else:
             history = train_and_evaluate_with_fit(model, train_set_x, train_set_y, dev_set_x, dev_set_y, params, callbacks_list)
@@ -264,7 +281,10 @@ if __name__ == '__main__':
 	    with open(history_pickle_file, 'rb') as f:
                 all_history = pickle.load(f)
 	    for measure in history.keys():
-                all_history[measure] += history[measure]
+	        if measure in all_history:
+                    all_history[measure] += history[measure]
+		else:
+		    all_history[measure] = history[measure]
 
             history = all_history
 

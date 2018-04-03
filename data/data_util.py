@@ -6,6 +6,10 @@ from scipy import ndimage
 import numpy as np
 import h5py
 
+from keras.preprocessing import image
+import matplotlib.pyplot as plt
+
+
 ### reverse a given dictionary
 def reverse_dict(mydict):
     return dict([(value, key) for (key, value) in mydict.items()]) 
@@ -171,3 +175,38 @@ def load_all_data(hdf5_filename):
     classes = dataset["list_classes"][:]
     
     return train_set_x_orig, train_set_y_orig, dev_set_x_orig, dev_set_y_orig, test_set_x_orig, test_set_y_orig, classes
+
+
+def preview_data_aug(img_path, datagen, preview_num=4):
+    ''' preview how image is being data-augmented.
+
+    
+    Parameters
+    ----------
+    img_path : Full path to image file
+    datagen: a Keras data generator 
+    preview_num: number of sample to preview
+    '''
+
+    # Read the image and resize it
+    img = image.load_img(img_path, target_size=(224, 224))
+    
+    # Convert it to a Numpy array with shape (:, :, 3)
+    x = image.img_to_array(img)
+
+    # Reshape it to (1, 150, 150, 3)
+    x = np.expand_dims(x, axis=0)
+    
+    # The .flow() command below generates batches of randomly transformed images.
+    # It will loop indefinitely, so we need to `break` the loop at some point!
+    i = 0
+    for batch in datagen.flow(x, batch_size=1):
+        plt.figure(i)
+        #imgplot = plt.imshow(image.array_to_img(batch[0]))
+        imgplot = plt.imshow(batch[0])
+        i += 1
+        if i % preview_num == 0:
+            break
+
+    plt.show()   
+
