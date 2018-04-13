@@ -1,6 +1,6 @@
 from keras.utils import to_categorical
 
-def preprocess(train_set_x, train_set_y, dev_set_x, dev_set_y, test_set_x, test_set_y):
+def preprocess(train_set_x, train_set_y, dev_set_x, dev_set_y, test_set_x, test_set_y, params):
     ''' return flatten and normalize input X for train, dev, and test set.
 
     Assumptions:
@@ -21,11 +21,11 @@ def preprocess(train_set_x, train_set_y, dev_set_x, dev_set_y, test_set_x, test_
     Returns
     -------
     train_set_x : Flatten and normalize
-    train_set_y : one-hot encoded
+    train_set_y : 
     dev_set_x : Flatten and normalize
-    dev_set_y : one-hot encoded
+    dev_set_y : 
     test_set_x : Flatten and normalize
-    test_set_y : one-hot encoded
+    test_set_y : 
 
     '''
 
@@ -42,9 +42,13 @@ def preprocess(train_set_x, train_set_y, dev_set_x, dev_set_y, test_set_x, test_
     test_set_x = test_set_x.reshape((-1, dim))
 
     # normalize 
-    train_set_x = train_set_x.astype('float32') / 255.
-    dev_set_x = dev_set_x.astype('float32') / 255.
-    test_set_x = test_set_x.astype('float32') / 255.
+    # check if data gen is used and skip normalize, because data generator will do the rescale
+    if not hasattr(params, "use_data_gen") or not params.use_data_gen:
+        train_set_x = train_set_x.astype('float32') / 255.
+        dev_set_x = dev_set_x.astype('float32') / 255.
+        test_set_x = test_set_x.astype('float32') / 255.
+
+        already_normalized = True
 
     return train_set_x, train_set_y, dev_set_x, dev_set_y, test_set_x, test_set_y
 

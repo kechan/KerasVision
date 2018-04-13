@@ -27,7 +27,6 @@ from model.training import train_and_evaluate_with_fit_generator
 
 from preprocessing.general import one_hot_encode_y
 
-
 description = """Kick off training by reading from model_dir (with params.json) and data_dir\n
 E.g. \n
 python train.py --model_dir experiments/logistic_regression --data_dir data/64x64_cropped_hdf5\n
@@ -45,6 +44,7 @@ parser.add_argument('--data_dir', default='data/64x64_SIGNS',
 parser.add_argument('--restore_from', default=None,
                     help="Optional, directory or file containing weights to reload before training")
 
+already_normalized = False
 
 def create_indice_to_classes_dictionary(classes):
     '''
@@ -83,6 +83,7 @@ def plot(history, model_dir, params):
     plt.plot(epochs, val_acc, 'b', label='Validation acc')
     plt.title('Training and validation accuracy')
     plt.legend(loc='upper left')
+    plt.grid()
 
     plt.savefig(os.path.join(model_dir, "acc.png"))
 
@@ -93,6 +94,7 @@ def plot(history, model_dir, params):
     plt.plot(epochs, val_loss, 'b', label='Validation loss')
     plt.title('Training and validation loss')
     plt.legend()
+    plt.grid()
 
     plt.savefig(os.path.join(model_dir, "loss.png"))
 
@@ -101,7 +103,7 @@ if __name__ == '__main__':
     # Note: this randomness may sometimes not work if training on GPU
     #seed(123)
     #tf.set_random_seed(230) 
-    
+
     #Load the parameters from json file
     args = parser.parse_args()
     model_dir = args.model_dir
@@ -113,7 +115,7 @@ if __name__ == '__main__':
     params = Params(json_path)
     # Validate on params
     params.validate()
-
+    
     # Check that we are not overwriting some previous experiment
     # Comment these lines if you are developing your model and don't care about overwritting
     model_dir_has_best_weights = os.path.isdir(os.path.join(args.model_dir, "best_weights"))
@@ -132,10 +134,13 @@ if __name__ == '__main__':
 
     logging.info("python train.py --model_dir " + args.model_dir + " --data_dir " + args.data_dir)
 
+    logging.info("params: " + str(params.dict))
+
     logging.info("Loading datasets...")
     train_set_x, train_set_y, dev_set_x, dev_set_y, test_set_x, test_set_y, classes = None, None, None, None, None, None, None
 
     if params.data_format == 'splitted_hdf5':
+	
         train_set_x, train_set_y, dev_set_x, dev_set_y, test_set_x, test_set_y, classes = from_splitted_hdf5(data_dir = data_dir)
 
 	logging.info("Dataset shape:")
@@ -170,9 +175,9 @@ if __name__ == '__main__':
 
     if params.model_type == "logistic_regression" or params.model_type == "feedforward":
 
-        from preprocessing.feedforward import preprocess   # Flatten, normalize, and one-hot targets
+        from preprocessing.feedforward import preprocess   # Flatten and normalize
 
-	train_set_x, train_set_y, dev_set_x, dev_set_y, test_set_x, test_set_y = preprocess(train_set_x, train_set_y, dev_set_x, dev_set_y, test_set_x, test_set_y)
+	train_set_x, train_set_y, dev_set_x, dev_set_y, test_set_x, test_set_y = preprocess(train_set_x, train_set_y, dev_set_x, dev_set_y, test_set_x, test_set_y, params)
 
 	logging.info("Using preprocessing.feedforward.preprocess")
 	logging.info("Dataset shape after preprocessing:")
@@ -183,6 +188,13 @@ if __name__ == '__main__':
         logging.info("\ttrain_set_y: " + str(train_set_y.shape))
         logging.info("\tdev_set_y: " + str(dev_set_y.shape))
         logging.info("\ttest_set_y: " + str(test_set_y.shape))
+
+    elif params.model_type == "convnet.transfer":
+
+        from preprocessing.transfer import preprocess     # Flatten
+
+        train_set_x, train_set_y, dev_set_x, dev_set_y, test_set_x, test_set_y = preprocess(train_set_x, train_set_y, dev_set_x, dev_set_y, test_set_x, test_set_y, params)
+        
 
     # Define the model
     logging.info("Creating the model...")
@@ -218,6 +230,11 @@ if __name__ == '__main__':
 
 	    from model.convnet.chollet import build_model
             model = build_model(input_shape=(dim, dim, 3), nb_classes=len(indice_classes), params=params)
+
+	elif params.model_type == "convnet.transfer":
+
+	    from model.convnet.transfer import build_model
+	    model = build_model(input_shape=train_set_x.shape[1:], nb_classes=len(indice_classes), params=params)
 
 
     logging.info("Input: " + str(model.inputs))

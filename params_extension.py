@@ -60,7 +60,8 @@ def data_format(value):
 					  etc.
     '''
 
-    assert (value == 'splitted_hdf5' or value == 'splitted_dirs'), "Invalid params.json value for key data_format."
+    assert (value == 'splitted_hdf5' or 
+            value == 'splitted_dirs'), "Invalid params.json value for key data_format."
 
 def model_type(value):
     '''
@@ -71,7 +72,8 @@ def model_type(value):
 
     assert (value == 'logistic_regression' or 
             value == 'feedforward' or 
-	    value == 'convnet.chollet'), "Invalid params.json value for key model_type."
+	    value == 'convnet.chollet' or
+	    value == 'convnet.transfer'), "Invalid params.json value for key model_type."
 
 def hidden_layers_config(params):
     '''

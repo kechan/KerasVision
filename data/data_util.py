@@ -159,20 +159,40 @@ def generate_h5(data_path, labels_to_classes_dictionary, outfile_path=None, shuf
 def load_all_data(hdf5_filename):
     dataset = h5py.File(hdf5_filename, "r")
 
-    train_set_x_orig = np.array(dataset["train_set_x"][:])
-    train_set_y_orig = np.array(dataset["train_set_y"][:])
+    if "train_set_x" in dataset.keys() and "train_set_y" in dataset.keys():
+        train_set_x_orig = np.array(dataset["train_set_x"][:])
+        train_set_y_orig = np.array(dataset["train_set_y"][:])
+    else:
+        train_set_x_orig = None
+	train_set_y_orig = None
 
-    dev_set_x_orig = np.array(dataset["dev_set_x"][:])
-    dev_set_y_orig = np.array(dataset["dev_set_y"][:])
+    if "dev_set_x" in dataset.keys() and "dev_set_y" in dataset.keys():
+        dev_set_x_orig = np.array(dataset["dev_set_x"][:])
+        dev_set_y_orig = np.array(dataset["dev_set_y"][:])
+    else:
+        dev_set_x_orig = None
+        dev_set_y_orig = None
 
-    test_set_x_orig = np.array(dataset["test_set_x"][:])
-    test_set_y_orig = np.array(dataset["test_set_y"][:])
+    if "test_set_x" in dataset.keys() and "test_set_y" in dataset.keys():
+        test_set_x_orig = np.array(dataset["test_set_x"][:])
+        test_set_y_orig = np.array(dataset["test_set_y"][:])
+    else:
+        test_set_x_orig = None
+        test_set_y_orig = None
 
-    train_set_y_orig = train_set_y_orig.reshape((train_set_y_orig.shape[0], 1))
-    dev_set_y_orig = dev_set_y_orig.reshape((dev_set_y_orig.shape[0], 1))
-    test_set_y_orig = test_set_y_orig.reshape((test_set_y_orig.shape[0], 1))
+    if train_set_y_orig is not None:
+        train_set_y_orig = train_set_y_orig.reshape((train_set_y_orig.shape[0], 1))
 
-    classes = dataset["list_classes"][:]
+    if dev_set_y_orig is not None:
+        dev_set_y_orig = dev_set_y_orig.reshape((dev_set_y_orig.shape[0], 1))
+     
+    if test_set_y_orig is not None:
+        test_set_y_orig = test_set_y_orig.reshape((test_set_y_orig.shape[0], 1))
+
+    if "list_classes" in dataset.keys():
+        classes = dataset["list_classes"][:]
+    else:
+        classes = None
     
     return train_set_x_orig, train_set_y_orig, dev_set_x_orig, dev_set_y_orig, test_set_x_orig, test_set_y_orig, classes
 

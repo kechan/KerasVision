@@ -5,6 +5,13 @@ import os
 from keras.preprocessing.image import ImageDataGenerator
 
 def configure_generator(data_dir, params):
+    '''
+    for .flow_from_directory(...)
+    '''
+
+    logging.info("Using ImageDataGenerator and .flow_from_directory")
+
+    assert hasattr(params, "image_size"), "image_size must be defined in params.json"
 
     size = params.image_size
     classes = params.classes
@@ -41,7 +48,15 @@ def configure_generator(data_dir, params):
     params.train_generator = train_generator
     params.validation_generator = validation_generator
 
+    already_normalized = True
+
 def configure_generator(train_set_x, train_set_y, dev_set_x, dev_set_y, params):
+
+    '''
+    for .flow(...)
+    '''
+
+    logging.info("Using ImageDataGenerator and .flow")
 
     classes = params.classes
     batch_size = params.batch_size
@@ -58,6 +73,8 @@ def configure_generator(train_set_x, train_set_y, dev_set_x, dev_set_y, params):
 
     params.train_generator = train_generator
     params.validation_generator = validation_generator
+
+    already_normalized = True
 
 
 def assign_more_params(train_datagen_args, params):
