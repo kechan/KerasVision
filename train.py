@@ -153,6 +153,8 @@ if __name__ == '__main__':
 
 	train_set_y, dev_set_y, test_set_y = one_hot_encode_y(train_set_y, dev_set_y, test_set_y)
 
+        #params.classes = classes
+
 	if hasattr(params, "use_data_gen") and params.use_data_gen:
 	   logging.info("Using data generator .flow")  
            configure_generator(train_set_x, train_set_y, dev_set_x, dev_set_y, params)
@@ -275,8 +277,8 @@ if __name__ == '__main__':
 					       )
 
     callbacks_list = [
-        model_checkpt_callback,
-        model_lr_callback
+        model_checkpt_callback
+        #model_lr_callback
     ] 
 
     # .fit**

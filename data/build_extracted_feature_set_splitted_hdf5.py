@@ -37,6 +37,7 @@ parser.add_argument('--pretrained_model', default='VGG16', help='Name of pre-tra
 parser.add_argument('--data_dir', default='original', help="Directory with the dataset")
 parser.add_argument('--output_dir', default='original_hdf5', help="Where to write the new data")
 parser.add_argument('--data_aug_n', default='0', help="Number of data augmentation round, the dataset will increase this number of times.")
+#parser.add_argument('--rebuild', default='true', help="if data aug set should be rebuilt")
 #parser.add_argument('--classes', help="comma delimited string list of classes")
 #parser.add_argument('--resize', default='-1', help='resize image to this dimension, a square')
 
@@ -138,6 +139,39 @@ def dump_h5(feature_set_x, feature_set_y, classes, outfile_path=None):
 
     hdf5_file.close()
 
+'''
+def copy_train_set(sourcefile_path, destfile_path, origin_feature_set_x_shape, origin_feature_set_y_shape):
+    # copy the the 1st segment of train set which has no data augmentation
+    source_f = h5py.File(sourcefile_path, mode='r')
+    dest_f = h5py.File(destfile_path, mode='w')
+
+    x_shape = origin_feature_set_x_shape
+    dest_f.create_dataset("train_set_x", x_shape, np.float32, maxshape=(None, x_shape[1], x_shape[2], x_shape[3]))
+    dest_f['train_set_x'][...] = source_f['train_set_x'][:]
+
+    y_shape = origin_feature_set_y_shape
+    dest_f.create_dataset("train_set_y", y_shape, np.uint8, maxshape(None, y_shape[1]))
+    dest_f['train_set_y'][...] = source_f['train_set_y'][:]
+
+    classes = source_f['list_classes'][:]
+    dest_f.create_dataset("list_classes", classes.shape, 'S10') 
+    dest_f["list_classes"][...] = classes
+
+    source_f.close()
+    dest_f.close()
+'''
+'''
+def read_feature_shape(outfile_path):
+
+    f = h5py.File(outfile_path, mode='r')
+
+    x_shape = f['train_set_x'].shape
+
+    y_shape = f['train_set_y'].shape
+
+    return x_shape[1:], y_shape[1:]
+'''
+
 if __name__ == '__main__':
     args = parser.parse_args()
 
@@ -165,9 +199,6 @@ if __name__ == '__main__':
     test_set_y = test_set_y[:5, :]
     '''
 
-    set_x = [train_set_x, dev_set_x, test_set_x]
-    set_y = [train_set_y, dev_set_y, test_set_y]
-
     if args.pretrained_model == 'VGG16':
         pretrained_model = VGG16(weights='imagenet', include_top=False, input_shape=train_set_x.shape[1:])
     elif args.pretrained_model == 'VGG19':
@@ -179,6 +210,8 @@ if __name__ == '__main__':
                                         gaussian_blur_range=0.7, 
 					height_shift_range=0.2, 
 					width_shift_range=0.2, 
+					shear_range=0.05,
+					zoom_range=0.4,
 					color_shift=True,
 					rot90=True, 
 					contrast_stretching=True
@@ -193,11 +226,33 @@ if __name__ == '__main__':
         print(outfile_path)
         dump_h5(feature_set_x, feature_set_y, classes, outfile_path)
 
+    '''
+    if args.rebuild:
+        assert not os.path.exists(outfile_path), "%s has to exist for rebuilding.".format(outfile_path)
+
+	rebuild_outfile_path = os.path.join(output_dir, hdf5_filename + ".new")
+
+        origin_feature_set_x_shape = (len(train_set_x), ?, ?, ?)
+	origin_feature_set_y_shape = (len(train_set_y), ?)
+
+        copy_train_set(outfile_path, 
+	               rebuild_outfile_path, 
+	               origin_feature_set_x_shape=origin_feature_set_x_shape, 
+		       origin_feature_set_y_shape=origin_feature_set_y_shape)
+    '''
     # data aug for train set
     for k in range(data_aug_n):
         feature_set_x, feature_set_y = extract_features_with_data_aug(pretrained_model, data_gen, train_set_x, train_set_y, len(train_set_x))
-        dump_h5(feature_set_x, feature_set_y, classes, outfile_path)
+	dump_h5(feature_set_x, feature_set_y, classes, outfile_path)
+
+	#if args.rebuild:
+	#    dump_h5(feature_set_x, feature_set_y, classes, rebuild_outfile_path)
+	#else:
+            
     
+    set_x = [dev_set_x, test_set_x]
+    set_y = [dev_set_y, test_set_y]
+
     for i, c in enumerate(['dev', 'test']):
 
         hdf5_filename =  args.pretrained_model + "_feature_" + c + ".hdf5"

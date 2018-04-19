@@ -39,7 +39,13 @@ def build_model(input_shape=(224, 224, 3), nb_classes=6, params=None):
     model.add(Activation('relu'))
     model.add(MaxPooling2D((2, 2)))
 
-    model.add(Conv2D(128, (3, 3)))
+    if input_shape[0] == 224 or input_shape[0] == 112:
+        model.add(Conv2D(128, (3, 3)))      # if input is 112x224 or 224x224  
+    elif input_shape[0] == 64:
+        model.add(Conv2D(256, (3, 3)))      # if input is 64x64
+    else:
+        model.add(Conv2D(128, (3, 3)))
+
     if batch_norm:
         model.add(BatchNormalization())
     model.add(Activation('relu'))

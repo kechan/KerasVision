@@ -21,11 +21,9 @@ def from_splitted_hdf5(data_dir):
     if os.path.isdir(data_dir):
         hdf5_files = glob.glob(os.path.join(data_dir, "*.hdf5")) 
 
-    assert len(hdf5_files) == 3, "Expecting 3 files with prefix train_, validation_, and test_"
+    assert len(hdf5_files) >= 3, "Expecting 3 files with prefix train_, validation_, and test_"
     assert len([f for f in hdf5_files if 'train' in f]) == 1, "Expecting a file with train*"
-    #assert len([f for f in hdf5_files if 'validation' in f]) == 1, "Expecting a file with validation*"
     assert len([f for f in hdf5_files if 'test' in f]) == 1, "Expecting a file with test*"
-
     assert len([f for f in hdf5_files if 'validation' in f or 'dev' in f]) == 1,  "Expecting a file with validation*, or dev*"
 
     # train set 

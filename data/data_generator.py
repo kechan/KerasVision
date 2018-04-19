@@ -3,13 +3,15 @@
 
 import os
 from keras.preprocessing.image import ImageDataGenerator
+from augmentation.CustomImageDataGenerator import * 
+
 
 def configure_generator(data_dir, params):
     '''
     for .flow_from_directory(...)
     '''
 
-    logging.info("Using ImageDataGenerator and .flow_from_directory")
+    print("Using ImageDataGenerator and .flow_from_directory")
 
     assert hasattr(params, "image_size"), "image_size must be defined in params.json"
 
@@ -21,6 +23,7 @@ def configure_generator(data_dir, params):
     assign_more_params(train_datagen_args, params)
 
     train_datagen = ImageDataGenerator(**train_datagen_args)    # image rescale
+    #train_datagen = CustomImageDataGenerator(**train_datagen_args)    # image rescale
     test_datagen = ImageDataGenerator(rescale=1./255)
 
     # checking up on data directories
@@ -56,15 +59,16 @@ def configure_generator(train_set_x, train_set_y, dev_set_x, dev_set_y, params):
     for .flow(...)
     '''
 
-    logging.info("Using ImageDataGenerator and .flow")
+    print("Using ImageDataGenerator and .flow")
 
-    classes = params.classes
+    #classes = params.classes
     batch_size = params.batch_size
 
     train_datagen_args = dict(rescale=1./255)
     assign_more_params(train_datagen_args, params)
 
-    train_datagen = ImageDataGenerator(**train_datagen_args)    # image rescale
+    #train_datagen = ImageDataGenerator(**train_datagen_args)    # image rescale
+    train_datagen = CustomImageDataGenerator(**train_datagen_args)    # image rescale
     test_datagen = ImageDataGenerator(rescale=1./255)
 
     train_generator = train_datagen.flow(train_set_x, train_set_y, batch_size=batch_size)
@@ -79,7 +83,7 @@ def configure_generator(train_set_x, train_set_y, dev_set_x, dev_set_y, params):
 
 def assign_more_params(train_datagen_args, params):
 
-    aug_params = ["rotation_range", "width_shift_range", "height_shift_range", "shear_range", "zoom_range"]
+    aug_params = ["rotation_range", "width_shift_range", "height_shift_range", "shear_range", "zoom_range", "rot90", "color_shift", "contrast_stretching", "gaussian_blur_range"]
 
     for aug_param in aug_params:
         if hasattr(params, aug_param):

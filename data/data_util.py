@@ -73,18 +73,28 @@ def generate_h5(data_path, labels_to_classes_dictionary, outfile_path=None, shuf
     # open a hdf5 file and create earrays
     hdf5_file = h5py.File(outfile_path, mode='w')
 
-    hdf5_file.create_dataset("train_set_x", train_shape, np.uint8)
-    hdf5_file.create_dataset("dev_set_x", dev_shape, np.uint8)
-    hdf5_file.create_dataset("test_set_x", test_shape, np.uint8)
+    if train_shape[0] > 0:
+        hdf5_file.create_dataset("train_set_x", train_shape, np.uint8, 
+                                 maxshape=(None, train_shape[1], train_shape[2], train_shape[3]),
+			         chunks=train_shape)
+	hdf5_file.create_dataset("train_set_y", (len(train_addrs),), np.uint8, maxshape=(None, ), chunks=(len(train_labels),))
+        hdf5_file["train_set_y"][...] = train_labels
+
+    if dev_shape[0] > 0:
+        hdf5_file.create_dataset("dev_set_x", dev_shape, np.uint8, 
+                                 maxshape=(None, dev_shape[1], dev_shape[2], dev_shape[3]),
+				 chunks=dev_shape)
+	hdf5_file.create_dataset("dev_set_y", (len(dev_addrs),), np.uint8, maxshape=(None, ), chunks=(len(dev_labels),))
+        hdf5_file["dev_set_y"][...] = dev_labels
+
+    if test_shape[0] > 0:
+        hdf5_file.create_dataset("test_set_x", test_shape, np.uint8, 
+                                 maxshape=(None, test_shape[1], test_shape[2], test_shape[3]),
+				 chunks=test_shape)
+	hdf5_file.create_dataset("test_set_y", (len(test_addrs),), np.uint8, maxshape=(None, ), chunks=(len(test_labels),))
+        hdf5_file["test_set_y"][...] = test_labels
 
     #hdf5_file.create_dataset("train_mean", train_shape[1:], np.float32)
-
-    hdf5_file.create_dataset("train_set_y", (len(train_addrs),), np.uint8)
-    hdf5_file["train_set_y"][...] = train_labels
-    hdf5_file.create_dataset("dev_set_y", (len(dev_addrs),), np.uint8)
-    hdf5_file["dev_set_y"][...] = dev_labels
-    hdf5_file.create_dataset("test_set_y", (len(test_addrs),), np.uint8)
-    hdf5_file["test_set_y"][...] = test_labels
 
     # list of classes
     list_classes = [""] * len(labels_to_classes_dictionary)
