@@ -68,11 +68,13 @@ def model_type(value):
     	logistic_regression
 	feedforward
 	convnet.chollet: Convnet as introduced in chapter 5 of Chollet's book
+	convnet.galaxy: convnet used in galaxy kaggle competition
     '''
 
     assert (value == 'logistic_regression' or 
             value == 'feedforward' or 
 	    value == 'convnet.chollet' or
+	    value == 'convnet.galaxy' or 
 	    value == 'convnet.transfer'), "Invalid params.json value for key model_type."
 
 def hidden_layers_config(params):

@@ -9,7 +9,7 @@ def add_conv_bn_conv_bn_pool_block(model, params):
     else:
         batch_norm = False
 
-    model.add(Conv2D(32, (3, 3), padding='same', input_shape=(input_shape), name='conv0'))
+    model.add(Conv2D(32, (3, 3), padding='same', input_shape=input_shape, name='conv0'))
     if batch_norm:
         model.add(BatchNormalization(axis=3, name='bn0'))
     model.add(Activation('relu'))
@@ -42,6 +42,6 @@ def build_model(input_shape=(224, 224, 3), nb_classes=6, nb_blocks=3, params=Non
 
     model.add(Dense(512, activation='relu'))
 
-    model.add(Dense(6, activation='softmax')) 
+    model.add(Dense(nb_classes, activation='softmax')) 
 
     return model

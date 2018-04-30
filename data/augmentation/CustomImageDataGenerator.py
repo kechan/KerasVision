@@ -59,7 +59,7 @@ class CustomImageDataGenerator(ImageDataGenerator):
 	    x = self.perform_gaussian_blur_range(x, self.gaussian_blur_range)
 
 	if self.color_shift:
-	    x = self.perform_color_shift(x, prob=1.0)
+	    x = self.perform_color_shift(x, rgb_shift=self.color_shift, prob=1.0)
 
 	if self.contrast_stretching:
 	    x = self.perform_contrast_stretching(x, prob=1.0)
@@ -71,7 +71,7 @@ class CustomImageDataGenerator(ImageDataGenerator):
 	    x = self.perform_adaptive_equalization(x)
 
 	if self.cut_out:
-	    x = self.perform_cutout(x, n_holes=self.cut_out[0], length=self.cut_out[1])
+	    x = self.perform_cut_out(x, n_holes=self.cut_out[0], length=self.cut_out[1])
 
 	return x
 
@@ -207,7 +207,7 @@ class CustomImageDataGenerator(ImageDataGenerator):
 
 	return x
 
-    def perform_cutout(self, im, n_holes=0, length=0, prob=0.5):
+    def perform_cut_out(self, im, n_holes=0, length=0, prob=0.5):
         ''' randomly cut out some squares '''
         if np.random.random() < prob:
 	    h, w, _ = im.shape

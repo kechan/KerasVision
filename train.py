@@ -82,7 +82,8 @@ def plot(history, model_dir, params):
     plt.plot(epochs, acc, 'bo', label='Training acc')
     plt.plot(epochs, val_acc, 'b', label='Validation acc')
     plt.title('Training and validation accuracy')
-    plt.legend(loc='upper left')
+    #plt.legend(loc='upper left')
+    plt.legend(loc='best')
     plt.grid()
 
     plt.savefig(os.path.join(model_dir, "acc.png"))
@@ -93,7 +94,8 @@ def plot(history, model_dir, params):
     plt.plot(epochs, loss, 'bo', label='Training loss')
     plt.plot(epochs, val_loss, 'b', label='Validation loss')
     plt.title('Training and validation loss')
-    plt.legend()
+    #plt.legend()
+    plt.legend(loc='best')
     plt.grid()
 
     plt.savefig(os.path.join(model_dir, "loss.png"))
@@ -236,6 +238,11 @@ if __name__ == '__main__':
 	elif params.model_type == "convnet.transfer":
 
 	    from model.convnet.transfer import build_model
+	    model = build_model(input_shape=train_set_x.shape[1:], nb_classes=len(indice_classes), params=params)
+	
+	elif params.model_type == "convnet.galaxy":
+
+	    from model.convnet.galaxy import build_model
 	    model = build_model(input_shape=train_set_x.shape[1:], nb_classes=len(indice_classes), params=params)
 
 
