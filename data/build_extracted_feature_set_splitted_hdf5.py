@@ -178,6 +178,8 @@ if __name__ == '__main__':
         pretrained_model = VGG16(weights='imagenet', include_top=False, input_shape=train_set_x.shape[1:])
     elif args.pretrained_model == 'VGG19':
         pretrained_model = VGG19(weights='imagenet', include_top=False, input_shape=train_set_x.shape[1:])
+    elif args.pretrained_model == 'InceptionV3':
+        pretrained_model = InceptionV3(weights='imagenet', include_top=False, input_shape=train_set_x.shape[1:])
     elif args.pretrained_model == 'Xception':
         pretrained_model = Xception(weights='imagenet', include_top=False, input_shape=train_set_x.shape[1:])
     elif args.pretrained_model == 'MobileNet':
