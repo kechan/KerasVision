@@ -183,7 +183,6 @@ if __name__ == '__main__':
     elif args.pretrained_model == 'MobileNet':
         pretrained_model = MobileNet(weights='imagenet', include_top=False, input_shape=train_set_x.shape[1:])
 
-    '''
     data_gen = CustomImageDataGenerator(rescale=1./255, 
 					rotation_range=90.0,
                                         gaussian_blur_range=1.0, 
@@ -196,6 +195,8 @@ if __name__ == '__main__':
 					cut_out=(20, 7),
 					contrast_stretching=True
 					)
+    
+    # data_gen for gray scale
     '''
     data_gen = CustomImageDataGenerator(rescale=1./255, 
 					rotation_range=90.0,
@@ -208,7 +209,7 @@ if __name__ == '__main__':
 					cut_out=(20, 7)
 					)
 
-
+    '''
     ## train set
     hdf5_filename = args.pretrained_model + "_feature_train.hdf5"
     outfile_path = os.path.join(output_dir, hdf5_filename)
