@@ -80,7 +80,7 @@ class CustomImageDataGenerator(ImageDataGenerator):
 
 
     def perform_color_shift(self, x, rgb_shift=None, prob=0.5):
-    if np.random.random() < prob:
+        if np.random.random() < prob:
             if rgb_shift is None:
                 rgb_shift = [10, 10, 10]
     
