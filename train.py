@@ -153,7 +153,7 @@ if __name__ == '__main__':
         logging.info("\tdev_set_y: " + str(dev_set_y.shape))
         logging.info("\ttest_set_y: " + str(test_set_y.shape))
 
-	train_set_y, dev_set_y, test_set_y = one_hot_encode_y(train_set_y, dev_set_y, test_set_y)
+        train_set_y, dev_set_y, test_set_y = one_hot_encode_y(train_set_y, dev_set_y, test_set_y)
 
         #params.classes = classes
 
