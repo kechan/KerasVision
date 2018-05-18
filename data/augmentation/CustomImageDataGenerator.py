@@ -155,10 +155,10 @@ class CustomImageDataGenerator(ImageDataGenerator):
     def perform_gaussian_blur_range(self, x, blur_range):
         pil_img = image.array_to_img(x)
 
-    radius = blur_range * np.random.rand()
-    blurred_img = pil_img.filter(ImageFilter.GaussianBlur(radius=radius))
+        radius = blur_range * np.random.rand()
+        blurred_img = pil_img.filter(ImageFilter.GaussianBlur(radius=radius))
 
-    return np.array(blurred_img)
+        return np.array(blurred_img)
 
 
     def perform_contrast_stretching(self, x, prob=0.5):
@@ -166,7 +166,7 @@ class CustomImageDataGenerator(ImageDataGenerator):
             p2, p98 = np.percentile(x, (2, 98))
             x = exposure.rescale_intensity(x, in_range=(p2, p98))
 
-    return x
+        return x
 
     def perform_histogram_equalization(self, x, prob=0.5):
         if np.random.random() < prob:
