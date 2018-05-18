@@ -34,7 +34,7 @@ class CustomImageDataGenerator(ImageDataGenerator):
            self.adaptive_equalization or \
            self.color_shift or \
            self.cut_out or \
-       self.gaussian_blur_range:
+           self.gaussian_blur_range:
             need_to_operate_on_no_norm_image = True
 
         if need_to_operate_on_no_norm_image:
@@ -58,22 +58,22 @@ class CustomImageDataGenerator(ImageDataGenerator):
         if self.gaussian_blur_range:
             x = self.perform_gaussian_blur_range(x, self.gaussian_blur_range)
 
-    if self.color_shift:
-        x = self.perform_color_shift(x, rgb_shift=self.color_shift, prob=1.0)
+        if self.color_shift:
+            x = self.perform_color_shift(x, rgb_shift=self.color_shift, prob=1.0)
 
-    if self.contrast_stretching:
-        x = self.perform_contrast_stretching(x, prob=1.0)
+        if self.contrast_stretching:
+            x = self.perform_contrast_stretching(x, prob=1.0)
 
-    if self.histogram_equalization:
-        x = self.perform_histogram_equalization(x)
+        if self.histogram_equalization:
+            x = self.perform_histogram_equalization(x)
 
-    if self.adaptive_equalization:
-        x = self.perform_adaptive_equalization(x)
+        if self.adaptive_equalization:
+            x = self.perform_adaptive_equalization(x)
 
-    if self.cut_out:
-        x = self.perform_cut_out(x, n_holes=self.cut_out[0], length=self.cut_out[1])
+        if self.cut_out:
+            x = self.perform_cut_out(x, n_holes=self.cut_out[0], length=self.cut_out[1])
 
-    return x
+        return x
 
     def perform_rot90(self, x):
         return np.rot90(x, k=np.random.randint(4), axes=[0, 1])
