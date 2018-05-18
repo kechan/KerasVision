@@ -163,22 +163,22 @@ class CustomImageDataGenerator(ImageDataGenerator):
 
     def perform_contrast_stretching(self, x, prob=0.5):
         if np.random.random() < prob:
-        p2, p98 = np.percentile(x, (2, 98))
-        x = exposure.rescale_intensity(x, in_range=(p2, p98))
+            p2, p98 = np.percentile(x, (2, 98))
+            x = exposure.rescale_intensity(x, in_range=(p2, p98))
 
     return x
 
     def perform_histogram_equalization(self, x, prob=0.5):
         if np.random.random() < prob:
-        x = exposure.equalize_hist(x)
+            x = exposure.equalize_hist(x)
 
         return x
 
     def perform_adaptive_equalization(self, x, prob=0.5):
         if np.random.random() < prob:
-        x = exposure.equalize_adapthist(x, clip_limit=0.03)
+            x = exposure.equalize_adapthist(x, clip_limit=0.03)
 
-    return x
+        return x
 
     def crop(self, x, r, c, size):
         return x[r:r+size, c:c+size]
@@ -189,28 +189,28 @@ class CustomImageDataGenerator(ImageDataGenerator):
         if np.random.random() < prob:
             renorm_x = np.reshape(x, (x.shape[0] * x.shape[1], 3)) 
 
-        renorm_x = renorm_x.astype('float32')
-        renorm_x -= np.mean(renorm_x, axis=0)
-        renorm_x /= np.std(renorm_x, axis=0)
+            renorm_x = renorm_x.astype('float32')
+            renorm_x -= np.mean(renorm_x, axis=0)
+            renorm_x /= np.std(renorm_x, axis=0)
 
-        cov = np.cov(renorm_image, rowvar=False)
-        lambdas, p = np.linalg.eig(cov)
+            cov = np.cov(renorm_image, rowvar=False)
+            lambdas, p = np.linalg.eig(cov)
 
-        alphas = np.random.normal(0, 0.1, 3)
+            alphas = np.random.normal(0, 0.1, 3)
 
-        #delta = p[:,0]*alphas[0]*lambdas[0] + p[:,1]*alphas[1]*lambdas[1] + p[:,2]*alphas[2]*lambdas[2]
-        delta = np.dot(p, alphas*lambdas)
+            #delta = p[:,0]*alphas[0]*lambdas[0] + p[:,1]*alphas[1]*lambdas[1] + p[:,2]*alphas[2]*lambdas[2]
+            delta = np.dot(p, alphas*lambdas)
 
-        delta = (delta*255.).astype('int8')
+            delta = (delta*255.).astype('int8')
 
-        x = np.maximum(np.minimum(x + delta, 255), 0).astype('uint8')
+            x = np.maximum(np.minimum(x + delta, 255), 0).astype('uint8')
 
-    return x
+        return x
 
     def perform_cut_out(self, im, n_holes=0, length=0, prob=0.5):
         ''' randomly cut out some squares '''
         if np.random.random() < prob:
-        h, w, _ = im.shape
+            h, w, _ = im.shape
             mask = np.ones((h, w), np.int32)
             for n in range(n_holes):
                 y = np.random.randint(h)
