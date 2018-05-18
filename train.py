@@ -157,7 +157,7 @@ if __name__ == '__main__':
 
         #params.classes = classes
 
-	if hasattr(params, "use_data_gen") and params.use_data_gen:
+        if hasattr(params, "use_data_gen") and params.use_data_gen:
 	   logging.info("Using data generator .flow")  
            configure_generator(train_set_x, train_set_y, dev_set_x, dev_set_y, params)
 
