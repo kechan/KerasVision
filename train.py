@@ -218,7 +218,7 @@ if __name__ == '__main__':
 
         if train_set_x is None:
             dim = params.image_size
-	else:
+        else:
             dim = train_set_x.shape[1]
 
         if params.model_type == "logistic_regression" or params.model_type == "feedforward":
