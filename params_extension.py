@@ -101,7 +101,7 @@ def classes(params):
         value = params.classes
 
     if params.data_format == 'splitted_dirs':
-	assert value is not None, "classes is missing in params.json."
+        assert value is not None, "classes is missing in params.json."
         assert type(value) == list, "Invalid params.json value for key classes, must be a list"
         assert len(value) > 1 and (type(value[0]) == str or type(value[0]) == unicode), "Number of classes must be bigger than 1 and must be a string"
 
