@@ -235,7 +235,7 @@ if __name__ == '__main__':
             from model.convnet.chollet import build_model
             model = build_model(input_shape=(dim, dim, 3), nb_classes=len(indice_classes), params=params)
 
-	elif params.model_type == "convnet.transfer":
+        elif params.model_type == "convnet.transfer":
 
             from model.convnet.transfer import build_model
             model = build_model(input_shape=train_set_x.shape[1:], nb_classes=len(indice_classes), params=params)
