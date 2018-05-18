@@ -145,7 +145,7 @@ if __name__ == '__main__':
 	
         train_set_x, train_set_y, dev_set_x, dev_set_y, test_set_x, test_set_y, classes = from_splitted_hdf5(data_dir = data_dir)
 
-	logging.info("Dataset shape:")
+        logging.info("Dataset shape:")
         logging.info("\ttrain_set_x: " + str(train_set_x.shape))
         logging.info("\tdev_set_x: " + str(dev_set_x.shape))
         logging.info("\ttest_set_x: " + str(test_set_x.shape))
