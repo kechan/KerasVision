@@ -158,16 +158,16 @@ if __name__ == '__main__':
         #params.classes = classes
 
         if hasattr(params, "use_data_gen") and params.use_data_gen:
-	   logging.info("Using data generator .flow")  
-           configure_generator(train_set_x, train_set_y, dev_set_x, dev_set_y, params)
+            logging.info("Using data generator .flow")  
+            configure_generator(train_set_x, train_set_y, dev_set_x, dev_set_y, params)
 
         params.train_sample_size = len(train_set_y)
-	params.validation_sample_size = len(dev_set_y)
+        params.validation_sample_size = len(dev_set_y)
 
     elif params.data_format == 'splitted_dirs':    # Using Keras generator
 
         classes = params.classes
-	configure_generator(data_dir, params)
+        configure_generator(data_dir, params)
 
     else:
         print("Other data input format") 
@@ -181,10 +181,10 @@ if __name__ == '__main__':
 
         from preprocessing.feedforward import preprocess   # Flatten and normalize
 
-	train_set_x, train_set_y, dev_set_x, dev_set_y, test_set_x, test_set_y = preprocess(train_set_x, train_set_y, dev_set_x, dev_set_y, test_set_x, test_set_y, params)
+        train_set_x, train_set_y, dev_set_x, dev_set_y, test_set_x, test_set_y = preprocess(train_set_x, train_set_y, dev_set_x, dev_set_y, test_set_x, test_set_y, params)
 
-	logging.info("Using preprocessing.feedforward.preprocess")
-	logging.info("Dataset shape after preprocessing:")
+        logging.info("Using preprocessing.feedforward.preprocess")
+        logging.info("Dataset shape after preprocessing:")
      
         logging.info("\ttrain_set_x: " + str(train_set_x.shape))
         logging.info("\tdev_set_x: " + str(dev_set_x.shape))
@@ -207,44 +207,43 @@ if __name__ == '__main__':
     model = None
     if restore_from is not None:
         model_h5 = os.path.join(restore_from, "model_and_weights.h5") 	
-	if os.path.exists(model_h5):
-	    from keras.models import load_model
+        if os.path.exists(model_h5):
+            from keras.models import load_model
 
-	    logging.info("loading model from existing .h5")
-	    model = load_model(model_h5)
-	    model_loaded_from_archive = True
+            logging.info("loading model from existing .h5")
+            model = load_model(model_h5)
+            model_loaded_from_archive = True
         
     if model is None:     
 
         if train_set_x is None:
-	    dim = params.image_size
+            dim = params.image_size
 	else:
-	    dim = train_set_x.shape[1]
+            dim = train_set_x.shape[1]
 
-	if params.model_type == "logistic_regression" or params.model_type == "feedforward":
+        if params.model_type == "logistic_regression" or params.model_type == "feedforward":
 
             if params.model_type == "logistic_regression":
-	        from model.logistic_regression import build_model
-	    elif params.model_type == "feedforward":
-	        from model.feedforward import build_model
+                from model.logistic_regression import build_model
+            elif params.model_type == "feedforward":
+                from model.feedforward import build_model
 
-	    model = build_model(input_shape=(dim,), nb_classes=len(indice_classes), params=params)
+            model = build_model(input_shape=(dim,), nb_classes=len(indice_classes), params=params)
 
-	elif params.model_type == "convnet.chollet":
+        elif params.model_type == "convnet.chollet":
 
-	    from model.convnet.chollet import build_model
+            from model.convnet.chollet import build_model
             model = build_model(input_shape=(dim, dim, 3), nb_classes=len(indice_classes), params=params)
 
 	elif params.model_type == "convnet.transfer":
 
-	    from model.convnet.transfer import build_model
-	    model = build_model(input_shape=train_set_x.shape[1:], nb_classes=len(indice_classes), params=params)
+            from model.convnet.transfer import build_model
+            model = build_model(input_shape=train_set_x.shape[1:], nb_classes=len(indice_classes), params=params)
 	
-	elif params.model_type == "convnet.galaxy":
+        elif params.model_type == "convnet.galaxy":
 
-	    from model.convnet.galaxy import build_model
-	    model = build_model(input_shape=train_set_x.shape[1:], nb_classes=len(indice_classes), params=params)
-
+            from model.convnet.galaxy import build_model
+            model = build_model(input_shape=train_set_x.shape[1:], nb_classes=len(indice_classes), params=params)
 
     logging.info("Input: " + str(model.inputs))
     model.summary(print_fn=logging.info)
@@ -253,11 +252,11 @@ if __name__ == '__main__':
     model_recompiled = False
     if not model_loaded_from_archive:   # don't recompile if loaded from *weights*.h5 or lose opt-zer states.
         compile_model(model, params)
-	model_recompiled = True
+        model_recompiled = True
 
     if not model_recompiled and hasattr(params, "always_recompile") and params.always_recompile:
         compile_model(model, params)
-	model_recompiled = True
+        model_recompiled = True
 
     if model_recompiled:
         logging.info("Model is re-compiled (or compiled first time).")
@@ -293,7 +292,7 @@ if __name__ == '__main__':
 
         if hasattr(params, "use_data_gen") and params.use_data_gen:
             history = train_and_evaluate_with_fit_generator(model, params, callbacks_list)
-	else:
+        else:
             history = train_and_evaluate_with_fit(model, train_set_x, train_set_y, dev_set_x, dev_set_y, params, callbacks_list)
 
     elif params.data_format == 'splitted_dirs':
@@ -303,14 +302,14 @@ if __name__ == '__main__':
     history = history.history
     if restore_from is not None and model_dir == restore_from:	
         history_pickle_file = os.path.join(model_dir, "history.pickle")
-	if os.path.exists(history_pickle_file):
-	    with open(history_pickle_file, 'rb') as f:
+        if os.path.exists(history_pickle_file):
+            with open(history_pickle_file, 'rb') as f:
                 all_history = pickle.load(f)
-	    for measure in history.keys():
-	        if measure in all_history:
+            for measure in history.keys():
+                if measure in all_history:
                     all_history[measure] += history[measure]
-		else:
-		    all_history[measure] = history[measure]
+                else:
+                    all_history[measure] = history[measure]
 
             history = all_history
 
