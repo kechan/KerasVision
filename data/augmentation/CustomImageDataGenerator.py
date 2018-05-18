@@ -11,17 +11,17 @@ class CustomImageDataGenerator(ImageDataGenerator):
 
     def __init__(self, rot90=False, gaussian_blur_range=None, color_shift=None, contrast_stretching=False, histogram_equalization=False, adaptive_equalization=False, cut_out=None, *args, **kwargs):
 
-	self.rot90 = rot90
+        self.rot90 = rot90
 
         self.gaussian_blur_range = gaussian_blur_range
 
-	self.color_shift = color_shift
+        self.color_shift = color_shift
 
         self.contrast_stretching = contrast_stretching
-	self.histogram_equalization = histogram_equalization
-	self.adaptive_equalization = adaptive_equalization
+        self.histogram_equalization = histogram_equalization
+        self.adaptive_equalization = adaptive_equalization
 
-	self.cut_out = cut_out
+        self.cut_out = cut_out
 
         ImageDataGenerator.__init__(self, *args, **kwargs)
 
@@ -30,57 +30,57 @@ class CustomImageDataGenerator(ImageDataGenerator):
         
         need_to_operate_on_no_norm_image = False
         if self.contrast_stretching or \
-	   self.histogram_equalization or \
-	   self.adaptive_equalization or \
-	   self.color_shift or \
-	   self.cut_out or \
-	   self.gaussian_blur_range:
-	    need_to_operate_on_no_norm_image = True
+           self.histogram_equalization or \
+           self.adaptive_equalization or \
+           self.color_shift or \
+           self.cut_out or \
+       self.gaussian_blur_range:
+            need_to_operate_on_no_norm_image = True
 
         if need_to_operate_on_no_norm_image:
-	    x = x.astype('uint8')
+            x = x.astype('uint8')
 
-	x = self.perform_custom_transform(x)
-	
+        x = self.perform_custom_transform(x)
+    
         if need_to_operate_on_no_norm_image:
-	    x = x.astype('float32')
-	
-	x = super(CustomImageDataGenerator, self).random_transform(x, seed=seed)
+            x = x.astype('float32')
+    
+        x = super(CustomImageDataGenerator, self).random_transform(x, seed=seed)
 
-	return x
+        return x
 
 
     def perform_custom_transform(self, x):
 
         if self.rot90:
-	    x = self.perform_rot90(x)
+            x = self.perform_rot90(x)
 
-	if self.gaussian_blur_range:
-	    x = self.perform_gaussian_blur_range(x, self.gaussian_blur_range)
+        if self.gaussian_blur_range:
+            x = self.perform_gaussian_blur_range(x, self.gaussian_blur_range)
 
-	if self.color_shift:
-	    x = self.perform_color_shift(x, rgb_shift=self.color_shift, prob=1.0)
+    if self.color_shift:
+        x = self.perform_color_shift(x, rgb_shift=self.color_shift, prob=1.0)
 
-	if self.contrast_stretching:
-	    x = self.perform_contrast_stretching(x, prob=1.0)
+    if self.contrast_stretching:
+        x = self.perform_contrast_stretching(x, prob=1.0)
 
-	if self.histogram_equalization:
-	    x = self.perform_histogram_equalization(x)
+    if self.histogram_equalization:
+        x = self.perform_histogram_equalization(x)
 
-	if self.adaptive_equalization:
-	    x = self.perform_adaptive_equalization(x)
+    if self.adaptive_equalization:
+        x = self.perform_adaptive_equalization(x)
 
-	if self.cut_out:
-	    x = self.perform_cut_out(x, n_holes=self.cut_out[0], length=self.cut_out[1])
+    if self.cut_out:
+        x = self.perform_cut_out(x, n_holes=self.cut_out[0], length=self.cut_out[1])
 
-	return x
+    return x
 
     def perform_rot90(self, x):
         return np.rot90(x, k=np.random.randint(4), axes=[0, 1])
 
 
     def perform_color_shift(self, x, rgb_shift=None, prob=0.5):
-	if np.random.random() < prob:
+    if np.random.random() < prob:
             if rgb_shift is None:
                 rgb_shift = [10, 10, 10]
     
@@ -155,30 +155,30 @@ class CustomImageDataGenerator(ImageDataGenerator):
     def perform_gaussian_blur_range(self, x, blur_range):
         pil_img = image.array_to_img(x)
 
-	radius = blur_range * np.random.rand()
-	blurred_img = pil_img.filter(ImageFilter.GaussianBlur(radius=radius))
+    radius = blur_range * np.random.rand()
+    blurred_img = pil_img.filter(ImageFilter.GaussianBlur(radius=radius))
 
-	return np.array(blurred_img)
+    return np.array(blurred_img)
 
 
     def perform_contrast_stretching(self, x, prob=0.5):
         if np.random.random() < prob:
-	    p2, p98 = np.percentile(x, (2, 98))
-	    x = exposure.rescale_intensity(x, in_range=(p2, p98))
+        p2, p98 = np.percentile(x, (2, 98))
+        x = exposure.rescale_intensity(x, in_range=(p2, p98))
 
-	return x
+    return x
 
     def perform_histogram_equalization(self, x, prob=0.5):
         if np.random.random() < prob:
-	    x = exposure.equalize_hist(x)
+        x = exposure.equalize_hist(x)
 
         return x
 
     def perform_adaptive_equalization(self, x, prob=0.5):
         if np.random.random() < prob:
-	    x = exposure.equalize_adapthist(x, clip_limit=0.03)
+        x = exposure.equalize_adapthist(x, clip_limit=0.03)
 
-	return x
+    return x
 
     def crop(self, x, r, c, size):
         return x[r:r+size, c:c+size]
@@ -189,28 +189,28 @@ class CustomImageDataGenerator(ImageDataGenerator):
         if np.random.random() < prob:
             renorm_x = np.reshape(x, (x.shape[0] * x.shape[1], 3)) 
 
-	    renorm_x = renorm_x.astype('float32')
-	    renorm_x -= np.mean(renorm_x, axis=0)
-	    renorm_x /= np.std(renorm_x, axis=0)
+        renorm_x = renorm_x.astype('float32')
+        renorm_x -= np.mean(renorm_x, axis=0)
+        renorm_x /= np.std(renorm_x, axis=0)
 
-	    cov = np.cov(renorm_image, rowvar=False)
-	    lambdas, p = np.linalg.eig(cov)
+        cov = np.cov(renorm_image, rowvar=False)
+        lambdas, p = np.linalg.eig(cov)
 
-	    alphas = np.random.normal(0, 0.1, 3)
+        alphas = np.random.normal(0, 0.1, 3)
 
-	    #delta = p[:,0]*alphas[0]*lambdas[0] + p[:,1]*alphas[1]*lambdas[1] + p[:,2]*alphas[2]*lambdas[2]
-	    delta = np.dot(p, alphas*lambdas)
+        #delta = p[:,0]*alphas[0]*lambdas[0] + p[:,1]*alphas[1]*lambdas[1] + p[:,2]*alphas[2]*lambdas[2]
+        delta = np.dot(p, alphas*lambdas)
 
-	    delta = (delta*255.).astype('int8')
+        delta = (delta*255.).astype('int8')
 
-	    x = np.maximum(np.minimum(x + delta, 255), 0).astype('uint8')
+        x = np.maximum(np.minimum(x + delta, 255), 0).astype('uint8')
 
-	return x
+    return x
 
     def perform_cut_out(self, im, n_holes=0, length=0, prob=0.5):
         ''' randomly cut out some squares '''
         if np.random.random() < prob:
-	    h, w, _ = im.shape
+        h, w, _ = im.shape
             mask = np.ones((h, w), np.int32)
             for n in range(n_holes):
                 y = np.random.randint(h)
