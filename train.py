@@ -271,8 +271,8 @@ if __name__ == '__main__':
     os.mkdir(weights_dir)
 
     model_checkpt_callback = keras.callbacks.ModelCheckpoint(
-                                                    filepath=os.path.join(weights_dir, "weights.{epoch:02d}-{val_loss:.2f}.h5"),
-	                                            monitor='val_loss',
+                                                    filepath=os.path.join(weights_dir, "weights.{epoch:02d}-{val_acc:.2f}.h5"),
+	                                            monitor='val_acc',
 	                                            save_best_only=True
 						   )
 

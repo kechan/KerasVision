@@ -13,6 +13,8 @@ from keras.applications import Xception, VGG16, VGG19, InceptionV3, ResNet50, Mo
 
 import numpy as np
 
+from model.convnet.cyclic_mobilenet import build_model as CyclicMobileNet
+
 
 BATCH_SIZE = 32
 
@@ -121,11 +123,13 @@ def dump_h5(feature_set_x, feature_set_y, classes, outfile_path=None):
         hdf5_file = h5py.File(outfile_path, mode='w')
 
 	shape = feature_set_x.shape
-        hdf5_file.create_dataset(prefix + "_set_x", feature_set_x.shape, np.float32, maxshape=(None, shape[1], shape[2], shape[3] ))
+        hdf5_file.create_dataset(prefix + "_set_x", feature_set_x.shape, np.float32, maxshape=(None, shape[1], shape[2], shape[3] ), 
+	                         chunks=feature_set_x.shape)
         hdf5_file[prefix + "_set_x"][...] = feature_set_x
 
 	shape = feature_set_y.shape
-        hdf5_file.create_dataset(prefix + "_set_y", feature_set_y.shape, np.uint8, maxshape=(None, shape[1]))
+        hdf5_file.create_dataset(prefix + "_set_y", feature_set_y.shape, np.uint8, maxshape=(None, shape[1]),
+	                         chunks=feature_set_y.shape)
         hdf5_file[prefix + "_set_y"][...] = feature_set_y
     
         hdf5_file.create_dataset("list_classes", classes.shape, 'S10')
@@ -184,6 +188,8 @@ if __name__ == '__main__':
         pretrained_model = Xception(weights='imagenet', include_top=False, input_shape=train_set_x.shape[1:])
     elif args.pretrained_model == 'MobileNet':
         pretrained_model = MobileNet(weights='imagenet', include_top=False, input_shape=train_set_x.shape[1:])
+    elif args.pretrained_model == 'CyclicMobileNet':
+        pretrained_model = CyclicMobileNet(input_shape=train_set_x.shape[1:])
 
     data_gen = CustomImageDataGenerator(rescale=1./255, 
 					rotation_range=90.0,
