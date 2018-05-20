@@ -1,5 +1,7 @@
 def train_and_evaluate_with_fit(model, train_set_x, train_set_y, dev_set_x, dev_set_y, params, callbacks_list):
 
+    print("model.fit got here")
+
     return model.fit(train_set_x, train_set_y, epochs=params.num_epochs, batch_size=params.batch_size, validation_data=(dev_set_x, dev_set_y), callbacks=callbacks_list)
 
 

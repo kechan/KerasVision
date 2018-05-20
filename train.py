@@ -26,6 +26,7 @@ from model.training import train_and_evaluate_with_fit
 from model.training import train_and_evaluate_with_fit_generator
 
 from preprocessing.general import one_hot_encode_y
+from preprocessing.general import renorm
 
 description = """Kick off training by reading from model_dir (with params.json) and data_dir\n
 E.g. \n
@@ -293,6 +294,8 @@ if __name__ == '__main__':
         if hasattr(params, "use_data_gen") and params.use_data_gen:
             history = train_and_evaluate_with_fit_generator(model, params, callbacks_list)
         else:
+	    if not already_normalized:
+	        train_set_x, dev_set_x, test_set_x = renorm(train_set_x, dev_set_x, test_set_x)
             history = train_and_evaluate_with_fit(model, train_set_x, train_set_y, dev_set_x, dev_set_y, params, callbacks_list)
 
     elif params.data_format == 'splitted_dirs':

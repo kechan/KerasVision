@@ -22,8 +22,8 @@ def configure_generator(data_dir, params):
     train_datagen_args = dict(rescale=1./255)
     assign_more_params(train_datagen_args, params)
 
-    train_datagen = ImageDataGenerator(**train_datagen_args)    # image rescale
-    #train_datagen = CustomImageDataGenerator(**train_datagen_args)    # image rescale
+    #train_datagen = ImageDataGenerator(**train_datagen_args)    # image rescale
+    train_datagen = CustomImageDataGenerator(**train_datagen_args)    # image rescale
     test_datagen = ImageDataGenerator(rescale=1./255)
 
     # checking up on data directories
