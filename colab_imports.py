@@ -20,4 +20,4 @@ def download_data_from_gdrive(ids, filenames):
                           #['train_224_224.hdf5.gz', 'validation_224_224.hdf5.gz', 'test_224_224.hdf5.gz'])
 
 call(["mkdir", "/content/data"])
-call(["mkdir", "/content/224x224_cropped_merged_heads_hdf5"])
+call(["mkdir", "/content/data/224x224_cropped_merged_heads_hdf5"])
