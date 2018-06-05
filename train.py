@@ -10,6 +10,7 @@ import pickle
 
 import tensorflow as tf
 import keras
+from keras import optimizers
 import numpy as np
 
 from utils import Params
@@ -21,7 +22,6 @@ from utils import save_dict_to_json
 from data.load_data import from_splitted_hdf5
 from data.data_generator import configure_generator
 
-from model.compiler import compile_model
 from model.training import train_and_evaluate_with_fit
 from model.training import train_and_evaluate_with_fit_generator
 
@@ -117,6 +117,24 @@ def plot(history, model_dir, params):
     plt.grid()
 
     plt.savefig(os.path.join(model_dir, "loss.png"))
+
+def compile_model(model, params):
+
+    if not hasattr(params, 'decay'):
+        params.decay = 0.0
+
+    if not hasattr(params, 'optimizer'):
+        params.optimizer = 'rmsprop'
+
+    if params.learning_rate is None:
+        model.compile(loss=params.loss, optimizer=params.optimizer, metrics=['accuracy'])
+    else:
+        if params.optimizer == 'rmsprop':
+	    model.compile(loss=params.loss, optimizer=optimizers.RMSprop(lr=params.learning_rate, decay=params.decay), metrics=['accuracy'])
+	elif params.optimizer == 'adam':
+	    model.compile(loss=params.loss, optimizer=optimizers.Adam(lr=params.learning_rate, decay=params.decay), metrics=['accuracy'])
+	else:
+	    pass
 
 if __name__ == '__main__':
     # Set the random seed for the whole graph for reproductible experiments
