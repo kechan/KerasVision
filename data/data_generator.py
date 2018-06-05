@@ -61,24 +61,23 @@ def configure_generator(train_set_x, train_set_y, dev_set_x, dev_set_y, params):
 
     print("Using ImageDataGenerator and .flow")
 
-    #classes = params.classes
     batch_size = params.batch_size
 
     train_datagen_args = dict(rescale=1./255)
     assign_more_params(train_datagen_args, params)
 
-    #train_datagen = ImageDataGenerator(**train_datagen_args)    # image rescale
     train_datagen = CustomImageDataGenerator(**train_datagen_args)    # image rescale
     test_datagen = ImageDataGenerator(rescale=1./255)
 
     train_generator = train_datagen.flow(train_set_x, train_set_y, batch_size=batch_size)
-
     validation_generator = test_datagen.flow(dev_set_x, dev_set_y, batch_size=batch_size)
 
-    params.train_generator = train_generator
-    params.validation_generator = validation_generator
+    #params.train_generator = train_generator
+    #params.validation_generator = validation_generator
 
     already_normalized = True
+
+    return train_generator, validation_generator
 
 
 def assign_more_params(train_datagen_args, params):

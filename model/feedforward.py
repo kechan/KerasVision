@@ -1,7 +1,7 @@
 from keras.models import Sequential
-from keras.layers import Dense
+from keras.layers import Dense, Dropout, Reshape
 
-def build_model(input_shape=(224*224*3,), nb_classes=6, params=None):
+def build_model(input_shape=(224, 224, 3), nb_classes=6, params=None):
     ''' return Feedward model for either binary or multiclass classification
 
    Parameters
@@ -17,6 +17,8 @@ def build_model(input_shape=(224*224*3,), nb_classes=6, params=None):
    '''
 
     model = Sequential()
+
+    model.add(Reshape(target_shape=(-1,), input_shape=input_shape))
 
     hidden_layers_config = params.hidden_layers_config
 

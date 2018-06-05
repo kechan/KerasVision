@@ -47,6 +47,23 @@ parser.add_argument('--restore_from', default=None,
 
 already_normalized = False
 
+
+def getDataSetType(data_dir):
+    hdf5_files = glob.glob(os.path.join(data_dir, "*.hdf5"))
+
+    if hdf5_files > 0: 
+        assert len(hdf5_files) >= 3, "Expecting 3 files with prefix train_, validation_, and test_"
+        assert len([f for f in hdf5_files if 'train' in f]) == 1, "Expecting a file with train*"
+        assert len([f for f in hdf5_files if 'test' in f]) == 1, "Expecting a file with test*"
+        assert len([f for f in hdf5_files if 'validation' in f or 'dev' in f]) == 1,  "Expecting a file with validation*, or dev*"
+ 
+	return "hdf5"
+
+    if os.path.isdir(os.path.join(data_dir, 'train')) and (os.path.isdir(os.path.join(data_dir, 'validation')) or os.path.isdir(os.path.join(data_dir, 'test'))):
+
+        return "directories"
+    
+
 def create_indice_to_classes_dictionary(classes):
     '''
     Input example: 
@@ -140,10 +157,9 @@ if __name__ == '__main__':
     logging.info("params: " + str(params.dict))
 
     logging.info("Loading datasets...")
-    train_set_x, train_set_y, dev_set_x, dev_set_y, test_set_x, test_set_y, classes = None, None, None, None, None, None, None
 
-    if params.data_format == 'splitted_hdf5':
-	
+    dataset_type = getDataSetType(data_dir)
+    if dataset_type == 'hdf5':
         train_set_x, train_set_y, dev_set_x, dev_set_y, test_set_x, test_set_y, classes = from_splitted_hdf5(data_dir = data_dir)
 
         logging.info("Dataset shape:")
@@ -156,16 +172,12 @@ if __name__ == '__main__':
 
         train_set_y, dev_set_y, test_set_y = one_hot_encode_y(train_set_y, dev_set_y, test_set_y)
 
-        #params.classes = classes
-
-        if hasattr(params, "use_data_gen") and params.use_data_gen:
-            logging.info("Using data generator .flow")  
-            configure_generator(train_set_x, train_set_y, dev_set_x, dev_set_y, params)
+        train_generator, validation_generator = configure_generator(train_set_x, train_set_y, dev_set_x, dev_set_y, params)
 
         params.train_sample_size = len(train_set_y)
         params.validation_sample_size = len(dev_set_y)
 
-    elif params.data_format == 'splitted_dirs':    # Using Keras generator
+    elif dataset_type == 'directories': 
 
         classes = params.classes
         configure_generator(data_dir, params)
@@ -179,21 +191,7 @@ if __name__ == '__main__':
 
 
     if params.model_type == "logistic_regression" or params.model_type == "feedforward":
-
-        from preprocessing.feedforward import preprocess   # Flatten and normalize
-
-        train_set_x, train_set_y, dev_set_x, dev_set_y, test_set_x, test_set_y = preprocess(train_set_x, train_set_y, dev_set_x, dev_set_y, test_set_x, test_set_y, params)
-
-        logging.info("Using preprocessing.feedforward.preprocess")
-        logging.info("Dataset shape after preprocessing:")
-     
-        logging.info("\ttrain_set_x: " + str(train_set_x.shape))
-        logging.info("\tdev_set_x: " + str(dev_set_x.shape))
-        logging.info("\ttest_set_x: " + str(test_set_x.shape))
-        logging.info("\ttrain_set_y: " + str(train_set_y.shape))
-        logging.info("\tdev_set_y: " + str(dev_set_y.shape))
-        logging.info("\ttest_set_y: " + str(test_set_y.shape))
-
+        pass
     elif params.model_type == "convnet.transfer":
 
         from preprocessing.transfer import preprocess     # Flatten
@@ -222,14 +220,15 @@ if __name__ == '__main__':
         else:
             dim = train_set_x.shape[1]
 
-        if params.model_type == "logistic_regression" or params.model_type == "feedforward":
+        if params.model_type == "logistic_regression": 
 
-            if params.model_type == "logistic_regression":
-                from model.logistic_regression import build_model
-            elif params.model_type == "feedforward":
-                from model.feedforward import build_model
+            from model.logistic_regression import build_model
+            model = build_model(input_shape=(dim, dim, 3), nb_classes=len(indice_classes), params=params)
 
-            model = build_model(input_shape=(dim,), nb_classes=len(indice_classes), params=params)
+	elif params.model_type == "feedforward":
+
+	    from model.feedforward import build_model
+	    model = build_model(input_shape=(dim, dim, 3), nb_classes=len(indice_classes), params=params)
 
         elif params.model_type == "convnet.chollet":
 
@@ -271,7 +270,7 @@ if __name__ == '__main__':
     os.mkdir(weights_dir)
 
     model_checkpt_callback = keras.callbacks.ModelCheckpoint(
-                                                    filepath=os.path.join(weights_dir, "weights.{epoch:02d}-{val_acc:.2f}.h5"),
+                                                    filepath=os.path.join(weights_dir, "weights.{epoch:02d}-{val_acc:.4f}.h5"),
 	                                            monitor='val_acc',
 	                                            save_best_only=True
 						   )
@@ -288,18 +287,22 @@ if __name__ == '__main__':
         #model_lr_callback
     ] 
 
-    # .fit**
-    if params.data_format == 'splitted_hdf5':
+    # train
+    num_epochs = params.num_epochs
 
-        if hasattr(params, "use_data_gen") and params.use_data_gen:
-            history = train_and_evaluate_with_fit_generator(model, params, callbacks_list)
-        else:
-	    if not already_normalized:
-	        train_set_x, dev_set_x, test_set_x = renorm(train_set_x, dev_set_x, test_set_x)
-            history = train_and_evaluate_with_fit(model, train_set_x, train_set_y, dev_set_x, dev_set_y, params, callbacks_list)
+    batch_size = params.batch_size
+    train_sample_size = params.train_sample_size
+    validation_sample_size = params.validation_sample_size
 
-    elif params.data_format == 'splitted_dirs':
-        history = train_and_evaluate_with_fit_generator(model, params, callbacks_list)
+    history = model.fit_generator(train_generator,
+                                  steps_per_epoch = train_sample_size // batch_size,
+			          epochs=num_epochs,
+			          callbacks=callbacks_list,
+			          validation_data = validation_generator,
+			          validation_steps = validation_sample_size // batch_size) 
+
+    #elif params.data_format == 'splitted_dirs':
+    #    history = train_and_evaluate_with_fit_generator(model, params, callbacks_list)
 
     # save history
     history = history.history

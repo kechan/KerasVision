@@ -9,8 +9,6 @@ acting like a documentation on whats available
 
 def _validate(self):
 
-    data_format(self.data_format)
-
     model_type(self.model_type)
 
     hidden_layers_config(self)
@@ -34,34 +32,6 @@ def _validate(self):
     image_size(self)
 
 Params.validate = _validate
-
-def data_format(value):
-    '''
-         splitted_hdf5, must be like
-
-	 		data_dir > train_set.hdf5
-			           dev_set.hdf5
-				   test_set.hdf5
-				   etc.
-
-         splitted_dir, must be like 
-	 		
-			data_dir > train > label1 
-					   label2
-					   label3
-					   etc.
-			         > validation > label1
-				 		label2
-						label3
-						etc.
-				 > test > label1
-				 	  label2
-					  label3
-					  etc.
-    '''
-
-    assert (value == 'splitted_hdf5' or 
-            value == 'splitted_dirs'), "Invalid params.json value for key data_format."
 
 def model_type(value):
     '''
@@ -100,11 +70,6 @@ def classes(params):
     if hasattr(params, "classes"):
         value = params.classes
 
-    if params.data_format == 'splitted_dirs':
-        assert value is not None, "classes is missing in params.json."
-        assert type(value) == list, "Invalid params.json value for key classes, must be a list"
-        assert len(value) > 1 and (type(value[0]) == str or type(value[0]) == unicode), "Number of classes must be bigger than 1 and must be a string"
-
 
 def optimizer(value):
     '''
@@ -140,9 +105,6 @@ def train_sample_size(params):
     if hasattr(params, "train_sample_size"):
         value = params.train_sample_size
 
-    if params.data_format == 'splitted_dirs':
-        assert value is not None, "train_sample_size is missing in params.json."
-
 
 def validation_sample_size(params):
     '''
@@ -153,9 +115,6 @@ def validation_sample_size(params):
 
     if hasattr(params, "validation_sample_size"):
         value = params.validation_sample_size
-
-    if params.data_format == 'splitted_dirs':
-        assert value is not None, "validation_sample_size is missing in params.json"
 
 def batch_size(value):
     assert value is not None, "batch_size is missing in params.json"
@@ -174,7 +133,5 @@ def image_size(params):
     if hasattr(params, "image_size"):
         value = params.image_size
 
-    if params.data_format == 'splitted_dirs':
-        assert value is not None, "image_size is missing in params.json"
 
 
