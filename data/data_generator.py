@@ -6,7 +6,7 @@ from keras.preprocessing.image import ImageDataGenerator
 from augmentation.CustomImageDataGenerator import * 
 
 
-def configure_generator(data_dir, params):
+def configure_generator_for_dir(data_dir, params):
     '''
     for .flow_from_directory(...)
     '''
@@ -16,13 +16,12 @@ def configure_generator(data_dir, params):
     assert hasattr(params, "image_size"), "image_size must be defined in params.json"
 
     size = params.image_size
-    classes = params.classes
+    #classes = params.classes
     batch_size = params.batch_size
 
     train_datagen_args = dict(rescale=1./255)
     assign_more_params(train_datagen_args, params)
 
-    #train_datagen = ImageDataGenerator(**train_datagen_args)    # image rescale
     train_datagen = CustomImageDataGenerator(**train_datagen_args)    # image rescale
     test_datagen = ImageDataGenerator(rescale=1./255)
 
@@ -37,21 +36,30 @@ def configure_generator(data_dir, params):
 	test_dir = os.path.join(data_dir, "test")
 	assert os.path.exists(test_dir) and os.path.isdir(test_dir), "test dir not found"
 
+    class_mode = 'categorical'
+    if hasattr(params, 'optimizer'):
+        if params.optimizer.startswith('binary'):
+	    class_mode = 'binary'
+	elif params.optimizer.startswith('categorical'):
+	    class_mode = 'categorical'
+
     train_generator = train_datagen.flow_from_directory(train_dir, 
                                                         target_size=(size, size), 
-                                                        batch_size=batch_size, 
-							classes=classes) 
+							class_mode=class_mode,
+                                                        batch_size=batch_size)
 
 
     validation_generator = test_datagen.flow_from_directory(validation_dir,
                                                             target_size=(size, size),
-							    batch_size=batch_size,
-							    classes=classes) 
+							    class_mode=class_mode,
+							    batch_size=batch_size)
  
-    params.train_generator = train_generator
-    params.validation_generator = validation_generator
+    #params.train_generator = train_generator
+    #params.validation_generator = validation_generator
 
     already_normalized = True
+
+    return train_generator, validation_generator
 
 def configure_generator(train_set_x, train_set_y, dev_set_x, dev_set_y, params):
 

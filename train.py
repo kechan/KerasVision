@@ -21,12 +21,10 @@ from utils import save_dict_to_json
 
 from data.load_data import from_splitted_hdf5
 from data.data_generator import configure_generator
+from data.data_generator import configure_generator_for_dir
 
-from model.training import train_and_evaluate_with_fit
-from model.training import train_and_evaluate_with_fit_generator
 
 from preprocessing.general import one_hot_encode_y
-from preprocessing.general import renorm
 
 description = """Kick off training by reading from model_dir (with params.json) and data_dir\n
 E.g. \n
@@ -50,8 +48,9 @@ already_normalized = False
 
 def getDataSetType(data_dir):
     hdf5_files = glob.glob(os.path.join(data_dir, "*.hdf5"))
+    
 
-    if hdf5_files > 0: 
+    if len(hdf5_files) > 0: 
         assert len(hdf5_files) >= 3, "Expecting 3 files with prefix train_, validation_, and test_"
         assert len([f for f in hdf5_files if 'train' in f]) == 1, "Expecting a file with train*"
         assert len([f for f in hdf5_files if 'test' in f]) == 1, "Expecting a file with test*"
@@ -195,27 +194,29 @@ if __name__ == '__main__':
         params.train_sample_size = len(train_set_y)
         params.validation_sample_size = len(dev_set_y)
 
+	indice_classes = create_indice_to_classes_dictionary(classes)
+
     elif dataset_type == 'directories': 
 
-        classes = params.classes
-        configure_generator(data_dir, params)
+        train_generator, validation_generator = configure_generator_for_dir(data_dir, params)
+
+	params.train_sample_size = train_generator.samples
+        params.validation_sample_size = validation_generator.samples
+
+	class_indices = train_generator.class_indices
+
+	indice_classes = {str(value): key for key, value in class_indices.items()}
+
+        classes = class_indices.keys()     # array of classes
+
+	params.classes = classes
+
 
     else:
-        print("Other data input format") 
-
-    indice_classes = create_indice_to_classes_dictionary(classes)
+        print("Unknown data input format") 
 
     logging.info("\tlabel/target to class mappings: " + str(indice_classes))
 
-
-    if params.model_type == "logistic_regression" or params.model_type == "feedforward":
-        pass
-    elif params.model_type == "convnet.transfer":
-
-        from preprocessing.transfer import preprocess     # Flatten
-
-        train_set_x, train_set_y, dev_set_x, dev_set_y, test_set_x, test_set_y = preprocess(train_set_x, train_set_y, dev_set_x, dev_set_y, test_set_x, test_set_y, params)
-        
 
     # Define the model
     logging.info("Creating the model...")
@@ -233,10 +234,10 @@ if __name__ == '__main__':
         
     if model is None:     
 
-        if train_set_x is None:
-            dim = params.image_size
+        if dataset_type == 'hdf5':
+	    dim = train_set_x.shape[1]
         else:
-            dim = train_set_x.shape[1]
+            dim = params.image_size
 
         if params.model_type == "logistic_regression": 
 

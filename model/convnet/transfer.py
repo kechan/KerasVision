@@ -4,7 +4,7 @@ from keras.layers import BatchNormalization, Activation
 from keras import regularizers
 #from keras.applications import VGG16
 
-def build_model(input_shape=(224*224*3,), nb_classes=6, params=None):
+def build_model(input_shape=(224, 224, 3), nb_classes=6, params=None):
     ''' Use everything up to the block5 of VGG16, and then add 
        the custom fc on top (Transfer Learnning).
 
@@ -37,6 +37,8 @@ def build_model(input_shape=(224*224*3,), nb_classes=6, params=None):
     assert len(hidden_layers_config) > 0, "hidden_layers_config must not be empty."
 
     custom_fc = Sequential()
+
+    custom_fc.add(Reshape(target_shape=(-1,), input_shape=input_shape))
 
     #custom_fc.add(Dense(hidden_layers_config[0], input_shape=input_shape, kernel_regularizer=regularizers.l2(0.01)))
     custom_fc.add(Dense(hidden_layers_config[0], input_shape=input_shape ))
