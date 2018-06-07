@@ -12,7 +12,8 @@ google_drive_filename_id = {
 'coursera_dl_lang_model.h5': '1HWJtRtNuRHN312zoc8AnFS4NlVTFqOIb',
 'coursera_dl_lang_model_5.h5': '1Yb89t-szy4qidAhXeS5j8BuYAQoNiUre',
 'cat_dog.zip': '1986mlvS7r-cCCc0l9yy4DBPoUTxkYed2',
-'keras_resnet_fc1_d0.75_weights_acc_0.9660.h5': '1k__rNgrUo6XrbIb6vIFIUbp3iwrGrGTC'
+'keras_resnet50_fc1_d0.75_weights_acc_0.9660.h5': '1k__rNgrUo6XrbIb6vIFIUbp3iwrGrGTC',
+'keras_cyc_resnet50_fc1_d0.5_weights_acc_0.9837.h5': '16A7CfcNuTvJYVvE_dgQs1p3R9cElRrES'
 }
 
 # workaround 
