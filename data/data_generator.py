@@ -90,9 +90,9 @@ def configure_generator(train_set_x, train_set_y, dev_set_x, dev_set_y, params):
 
 def assign_more_params(train_datagen_args, params):
 
-    aug_params = ["rotation_range", "width_shift_range", "height_shift_range", "shear_range", "zoom_range", "rot90", "color_shift", "contrast_stretching", "gaussian_blur_range"]
+    aug_types = ["rotation_range", "width_shift_range", "height_shift_range", "shear_range", "zoom_range", "rot90", "color_shift", "contrast_stretching", "gaussian_blur_range"]
 
-    for aug_param in aug_params:
-        if hasattr(params, aug_param):
-            value = params.dict[aug_param]
-            train_datagen_args[aug_param] = value 
+    for aug_type in aug_types:
+        if hasattr(params, aug_type):
+            value = params.dict[aug_type]
+            train_datagen_args[aug_type] = value 

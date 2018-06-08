@@ -45,7 +45,8 @@ def model_type(value):
             value == 'feedforward' or 
 	    value == 'convnet.chollet' or
 	    value == 'convnet.galaxy' or 
-	    value == 'convnet.transfer'), "Invalid params.json value for key model_type."
+	    value == 'convnet.transfer' or 
+	    value == 'convnet.resnet50'), "Invalid params.json value for key model_type."
 
 def hidden_layers_config(params):
     '''
