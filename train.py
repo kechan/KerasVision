@@ -100,6 +100,7 @@ def plot(history, model_dir, params):
     plt.plot(epochs, val_acc, 'b', label='Validation acc')
     plt.title('Training and validation accuracy')
     #plt.legend(loc='upper left')
+    plt.xlabel('Epochs')
     plt.legend(loc='best')
     plt.grid()
 
@@ -111,6 +112,7 @@ def plot(history, model_dir, params):
     plt.plot(epochs, loss, 'bo', label='Training loss')
     plt.plot(epochs, val_loss, 'b', label='Validation loss')
     plt.title('Training and validation loss')
+    plt.xlabel('Epochs')
     #plt.legend()
     plt.legend(loc='best')
     plt.grid()
@@ -268,7 +270,18 @@ if __name__ == '__main__':
 
 	    from model.convnet.resnet50 import build_model
 	    model = build_model(input_shape=train_set_x.shape[1:], nb_classes=len(indice_classes), params=params)
-	    #model = build_model(input_shape=None, nb_classes=len(indice_classes), params=params)
+
+        elif params.model_type == 'convnet.resnet50.noshape':
+
+            from model.convnet.resnet50 import build_model
+
+	    # extra preprocessing for 1x1 conv2d as last layer to allow flexible input_shape
+	    reshaped_train_set_y = train_set_y[:,None,None,:]
+	    reshaped_dev_set_y = dev_set_y[:,None,None,:]
+
+            train_generator, validation_generator = configure_generator(train_set_x, reshaped_train_set_y, dev_set_x, reshaped_dev_set_y, params)
+
+	    model = build_model(input_shape=None, nb_classes=len(indice_classes), params=params)
 
     logging.info("Input: " + str(model.inputs))
     model.summary(print_fn=logging.info)

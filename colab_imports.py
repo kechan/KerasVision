@@ -10,6 +10,7 @@ google_drive_filename_id = {
 'keras_resnet50_fc1_weights_acc_0.9783.h5': '1Kkaay-LN7u8DYTWGm2XlHrDnKR3218CL',
 'keras_resnet50_fc1_d0.7_weights_acc_0.9796.h5': '1sCf9MszmL41oKfXM3OxY7MKmlP3N7KVN',
 'keras_resnet50_fc1_d0.7_weights_acc_0.9810.h5': '1PTikV_JkZOndZCPfcgk6uGLUpVwY55Du',
+'keras_resnet50_conv1_d0.7_weights_acc_0.9823.h5': '1K9jcXyBSRQCjqrn_-JAryTvU7Y4eRl54',
 'keras_resnet101_weights_acc_0.9620.h5': '1HLY_EOY1wbzHIvD3W29uMIHq8pIx-HWe',
 'deep_learning_sentences.pickle': '1vn-pBVbFC0GAd7E5foa5SM_T_RT5PR-I',
 'coursera_dl_lang_model.h5': '1HWJtRtNuRHN312zoc8AnFS4NlVTFqOIb',
