@@ -46,7 +46,8 @@ def model_type(value):
 	    value == 'convnet.chollet' or
 	    value == 'convnet.galaxy' or 
 	    value == 'convnet.transfer' or 
-	    value == 'convnet.resnet50'), "Invalid params.json value for key model_type."
+	    value == 'convnet.resnet50' or
+	    value == 'convnet.resnet50.noshape'), "Invalid params.json value for key model_type."
 
 def hidden_layers_config(params):
     '''

@@ -3,6 +3,7 @@ from skimage import exposure, img_as_int
 from keras.preprocessing.image import ImageDataGenerator
 from keras.preprocessing import image
 from PIL import ImageDraw, ImageFont, ImageFilter
+from data.CustomDirectoryIterator import DirectoryIteratorWith1x1ConvTarget
 
 # import matplotlib.pyplot as plt
 
@@ -227,3 +228,27 @@ class CustomImageDataGenerator(ImageDataGenerator):
 
         return im
 
+
+    def flow_from_directory_with_1x1_conv_target(self, directory,
+                            target_size=(256, 256), color_mode='rgb',
+                            classes=None, class_mode='categorical',
+                            batch_size=32, shuffle=True, seed=None,
+                            save_to_dir=None,
+                            save_prefix='',
+                            save_format='png',
+                            follow_links=False,
+                            subset=None,
+                            interpolation='nearest'):
+
+        return DirectoryIteratorWith1x1ConvTarget(
+	    directory, self,
+            target_size=target_size, color_mode=color_mode,
+            classes=classes, class_mode=class_mode,
+            data_format=self.data_format,
+            batch_size=batch_size, shuffle=shuffle, seed=seed,
+            save_to_dir=save_to_dir,
+            save_prefix=save_prefix,
+            save_format=save_format,
+            follow_links=follow_links,
+            subset=subset,
+            interpolation=interpolation)

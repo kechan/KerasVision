@@ -23,7 +23,7 @@ def configure_generator_for_dir(data_dir, params):
     assign_more_params(train_datagen_args, params)
 
     train_datagen = CustomImageDataGenerator(**train_datagen_args)    # image rescale
-    test_datagen = ImageDataGenerator(rescale=1./255)
+    test_datagen = CustomImageDataGenerator(rescale=1./255)
 
     # checking up on data directories
     if os.path.exists(data_dir) and os.path.isdir(data_dir):
@@ -43,23 +43,34 @@ def configure_generator_for_dir(data_dir, params):
 	elif params.optimizer.startswith('categorical'):
 	    class_mode = 'categorical'
 
-    train_generator = train_datagen.flow_from_directory(train_dir, 
+    if params.model_type.endswith('.noshape'):
+        train_generator = train_datagen.flow_from_directory_with_1x1_conv_target(train_dir, 
                                                         target_size=(size, size), 
 							class_mode=class_mode,
                                                         batch_size=batch_size)
 
 
-    validation_generator = test_datagen.flow_from_directory(validation_dir,
+        validation_generator = test_datagen.flow_from_directory_with_1x1_conv_target(validation_dir,
+                                                            target_size=(size, size),
+							    class_mode=class_mode,
+							    batch_size=batch_size)
+    else:
+        train_generator = train_datagen.flow_from_directory(train_dir, 
+                                                        target_size=(size, size), 
+							class_mode=class_mode,
+                                                        batch_size=batch_size)
+
+
+        validation_generator = test_datagen.flow_from_directory(validation_dir,
                                                             target_size=(size, size),
 							    class_mode=class_mode,
 							    batch_size=batch_size)
  
-    #params.train_generator = train_generator
-    #params.validation_generator = validation_generator
-
     already_normalized = True
 
     return train_generator, validation_generator
+
+    
 
 def configure_generator(train_set_x, train_set_y, dev_set_x, dev_set_y, params):
 
@@ -77,11 +88,14 @@ def configure_generator(train_set_x, train_set_y, dev_set_x, dev_set_y, params):
     train_datagen = CustomImageDataGenerator(**train_datagen_args)    # image rescale
     test_datagen = ImageDataGenerator(rescale=1./255)
 
-    train_generator = train_datagen.flow(train_set_x, train_set_y, batch_size=batch_size)
-    validation_generator = test_datagen.flow(dev_set_x, dev_set_y, batch_size=batch_size)
-
-    #params.train_generator = train_generator
-    #params.validation_generator = validation_generator
+    if params.model_type.endswith('.noshape'):
+        reshaped_train_set_y = train_set_y[:,None,None,:]
+	reshaped_dev_set_y = dev_set_y[:,None,None,:]
+	train_generator = train_datagen.flow(train_set_x, reshaped_train_set_y, batch_size=batch_size)
+        validation_generator = test_datagen.flow(dev_set_x, reshaped_dev_set_y, batch_size=batch_size)
+    else:
+        train_generator = train_datagen.flow(train_set_x, train_set_y, batch_size=batch_size)
+        validation_generator = test_datagen.flow(dev_set_x, dev_set_y, batch_size=batch_size)
 
     already_normalized = True
 
