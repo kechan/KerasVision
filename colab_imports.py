@@ -6,7 +6,7 @@ google_drive_filename_id = {
 'validation_224_224.hdf5.gz': '1FgVh2oGqH9Pr4Ze2NETyLnBTPtC0hTui',
 'test_224_224.hdf5.gz': '1X6ijkgbWCzATPCJLx0rBCy5jtUkjo2KG',
 '150x150_cropped_merged_heads_hdf5.tar.gz': '1vXZGV3WUmGPrUTaO5NhdVndc36McTdbj',
-'cropped_merged_heads_resized_512.tar.gz': '1ZnpnqZzoA0Mpp77pQMxL7aCxHmEUQKVQ',
+'cropped_merged_heads_resized_512.tar.gz': '1LARMS0JatAEf8RcBztYU3EMntEdZ-8kP',
 'cropped_merged_heads_resized_1024.tar.gz': '1D0xOnbWa94KdxMSI59RfL4oYz3UV072w',
 'resnet101_weights_tf.h5': '1tFWWXxctzWzcjfvuotZLYemXdw7zxDKQ',
 'keras_resnet50_fc1_weights_acc_0.9783.h5': '1Kkaay-LN7u8DYTWGm2XlHrDnKR3218CL',
