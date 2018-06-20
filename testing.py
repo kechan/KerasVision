@@ -82,17 +82,21 @@ if __name__ == "__main__":
     
     top_data_dir = os.path.join(project_dir, "data")
 
+    
     '''
-    data_dir = os.path.join(top_data_dir, "128x128_cropped_merged_heads_hdf5")
+    data_dir = os.path.join(top_data_dir, "224x224_cropped_merged_heads_hdf5")
 
     train_set_x, train_set_y, dev_set_x, dev_set_y, _, _, classes = \
                from_splitted_hdf5(data_dir)
 
     test_custom_image_data_generator(train_set_x, train_set_y, dev_set_x, dev_set_y)
     '''
+    
 
+    #'''
     data_dir = os.path.join(top_data_dir, 'cropped_merged_heads_resized_224')
 
     test_custom_image_data_generator_for_dir(data_dir)
+    #'''
 
 

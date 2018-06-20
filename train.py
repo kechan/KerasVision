@@ -219,6 +219,8 @@ if __name__ == '__main__':
 
     logging.info("\tlabel/target to class mappings: " + str(indice_classes))
 
+    # debug 
+
 
     # Define the model
     logging.info("Creating the model...")
