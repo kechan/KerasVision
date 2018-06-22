@@ -26,7 +26,8 @@ google_drive_filename_id = {
 'cat_dog.zip': '1986mlvS7r-cCCc0l9yy4DBPoUTxkYed2',
 'keras_resnet50_fc1_d0.75_weights_acc_0.9660.h5': '1k__rNgrUo6XrbIb6vIFIUbp3iwrGrGTC',
 'keras_cyc_resnet50_fc1_d0.5_weights_acc_0.9837.h5': '16A7CfcNuTvJYVvE_dgQs1p3R9cElRrES',
-'keras_cyc_resnet50_fc1_d0.5_weights_acc_0.9878.h5': '1SZRnrPr0Ibaty3v9XYquQ2m7MAAAQwUZ'
+'keras_cyc_resnet50_fc1_d0.5_weights_acc_0.9878.h5': '1SZRnrPr0Ibaty3v9XYquQ2m7MAAAQwUZ',
+'keras_resnet50_far_less_aug_fc1_d0.5_weights_acc_0.9040.h5': '1E_b6BrQwdWYDKy7reVoWtwU-duYzfb2k'
 }
 
 # workaround 
