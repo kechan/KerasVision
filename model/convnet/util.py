@@ -2,7 +2,7 @@ from keras.models import Sequential, Model
 from keras.layers import Dense, Conv2D, Dropout
 from keras.application import ResNet50
 
-def transform_pretrained_resnet_fc_2_conv(resnet_model, dropout=None)
+def transform_pretrained_resnet_fc_2_conv(resnet_model, dropout=None):
     ''' Transform a resnet50 with fc as last layer to using 1x1 conv'''
     ''' this will allow flexible input (ie. image size) '''
 
