@@ -32,7 +32,6 @@ def generate_h5(data_path, labels_to_classes_dictionary, outfile_path=None, shuf
         label_dir = os.path.join(data_path, label_str)
         if os.path.isdir(label_dir) and os.path.exists(label_dir):
         
-            #addrs = glob.glob(os.path.join(label_dir, "*." + data_file_ext))
             addrs = glob.glob(os.path.join(label_dir, "*.*"))
             labels = [int(label_int) for addr in addrs]
 
@@ -106,6 +105,13 @@ def generate_h5(data_path, labels_to_classes_dictionary, outfile_path=None, shuf
     hdf5_file.create_dataset("list_classes", (len(list_classes),), 'S10')
     hdf5_file["list_classes"][...] = np.array(list_classes)
 
+    # idx to filename
+    train_idx_filenames, dev_idx_filenames, test_idx_filenames = [], [], []
+    hdf5_file.create_dataset("train_idx_filenames", (train_shape[0],), 'S100')
+    hdf5_file.create_dataset("dev_idx_filenames", (dev_shape[0],), 'S100')
+    hdf5_file.create_dataset("test_idx_filenames", (test_shape[0],), 'S100')
+    
+
     # loop over train addresses
     for i in range(len(train_addrs)):
         # print how many images are saved every 100 images
@@ -124,6 +130,8 @@ def generate_h5(data_path, labels_to_classes_dictionary, outfile_path=None, shuf
 
         hdf5_file["train_set_x"][i, ...] = img[:,:,:3]
         #mean += img / float(len(train_labels))
+
+	train_idx_filenames.append(addr)
      
     # loop over dev addresses
     for i in range(len(dev_addrs)):
@@ -143,6 +151,8 @@ def generate_h5(data_path, labels_to_classes_dictionary, outfile_path=None, shuf
 
         hdf5_file["dev_set_x"][i, ...] = img[:,:,:3]
 
+        dev_idx_filenames.append(addr)
+
     # loop over test addresses
     for i in range(len(test_addrs)):
         # print how many images are saved every 100 images
@@ -161,7 +171,13 @@ def generate_h5(data_path, labels_to_classes_dictionary, outfile_path=None, shuf
         # save the image
 
         hdf5_file["test_set_x"][i, ...] = img[:,:,:3]
+
+	test_idx_filenames.append(addr)
     
+
+    hdf5_file["train_idx_filenames"][...] = np.array(train_idx_filenames)
+    hdf5_file["dev_idx_filenames"][...] = np.array(dev_idx_filenames)
+    hdf5_file["test_idx_filenames"][...] = np.array(test_idx_filenames)
     # save and close the hdf5 file
 
     hdf5_file.close()
