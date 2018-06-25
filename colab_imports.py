@@ -5,9 +5,11 @@ google_drive_filename_id = {
 'train_224_224.hdf5.gz': '1Zdt10Q1Jn-hrq2o1mmvQ1j4DgBTxxGIq',
 'validation_224_224.hdf5.gz': '1FgVh2oGqH9Pr4Ze2NETyLnBTPtC0hTui',
 'test_224_224.hdf5.gz': '1X6ijkgbWCzATPCJLx0rBCy5jtUkjo2KG',
+
 '224x224_original_and_cropped_merged_heads.train_224_224.hdf5': '1ShQU-ASlFviY-N2abN4PZEl0E4gATIIr',
 '224x224_original_and_cropped_merged_heads.validation_224_224.hdf5': '1vfOXhk_lgEUFS7hDgaaX8Os2comYuGL8',
 '224x224_original_and_cropped_merged_heads.test_224_224.hdf5': '1EhauFTRd8QUddBAGHl5mgGWBEZplxjWK',
+
 '150x150_cropped_merged_heads_hdf5.tar.gz': '1vXZGV3WUmGPrUTaO5NhdVndc36McTdbj',
 'cropped_merged_heads_resized_224.tar.gz': '1SHVVSWY3H7P6VpqE-g3VVpmNdz_299AT',
 'cropped_merged_heads_resized_512.tar.gz': '1LARMS0JatAEf8RcBztYU3EMntEdZ-8kP',
@@ -28,7 +30,8 @@ google_drive_filename_id = {
 'keras_cyc_resnet50_fc1_d0.5_weights_acc_0.9837.h5': '16A7CfcNuTvJYVvE_dgQs1p3R9cElRrES',
 'keras_cyc_resnet50_fc1_d0.5_weights_acc_0.9878.h5': '1SZRnrPr0Ibaty3v9XYquQ2m7MAAAQwUZ',
 'keras_resnet50_far_less_aug_fc1_d0.5_weights_acc_0.9040.h5': '1E_b6BrQwdWYDKy7reVoWtwU-duYzfb2k',
-'keras_resnet50_far_less_aug_fc1_d0.5_weights_acc_0.9204.h5': '1SXVJlDbT6ij_qLrXOxIAPkCHvq8TcI21'
+'keras_resnet50_far_less_aug_fc1_d0.5_weights_acc_0.9204.h5': '1SXVJlDbT6ij_qLrXOxIAPkCHvq8TcI21',
+'keras_resnet50_far_less_aug_conv1_d0.5_weights_acc_0.9204.h5': '1lpHe8LuP97LyoL8ceVrrSf84JDYAs9QF'
 }
 
 # workaround 
