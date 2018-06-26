@@ -31,7 +31,15 @@ google_drive_filename_id = {
 'keras_cyc_resnet50_fc1_d0.5_weights_acc_0.9878.h5': '1SZRnrPr0Ibaty3v9XYquQ2m7MAAAQwUZ',
 'keras_resnet50_far_less_aug_fc1_d0.5_weights_acc_0.9040.h5': '1E_b6BrQwdWYDKy7reVoWtwU-duYzfb2k',
 'keras_resnet50_far_less_aug_fc1_d0.5_weights_acc_0.9204.h5': '1SXVJlDbT6ij_qLrXOxIAPkCHvq8TcI21',
-'keras_resnet50_far_less_aug_conv1_d0.5_weights_acc_0.9204.h5': '1lpHe8LuP97LyoL8ceVrrSf84JDYAs9QF'
+'keras_resnet50_far_less_aug_conv1_d0.5_weights_acc_0.9204.h5': '1lpHe8LuP97LyoL8ceVrrSf84JDYAs9QF',
+
+'train_336_336.hdf5.aa': '1a2J3cH4OQnoCpK7Rv918oGCkXdpWPoia',
+'train_336_336.hdf5.ab': '12FdQnhXzwqgF2pWYZqZL7xUGlcf2yjwH',
+'train_336_336.hdf5.ac': '1CjL-N-QHyzaEx2Ygd1xbJwYM0WM3SpuS',
+'train_336_336.hdf5.ad': '1h7esN7BNd8PmXGMiyL40awguR3tZ8KTM',
+'validation_336_336.hdf5': '1y8BaHz_HliYnmdQevdsC8xA7QcFzBO3C',
+'test_336_336.hdf5': '1jqGWC88Nm3zkoPMPjnjoLy5ADb1E6ecF'
+
 }
 
 # workaround 
