@@ -76,6 +76,7 @@ def generate_h5(data_path, labels_to_classes_dictionary, outfile_path=None, shuf
         hdf5_file.create_dataset("train_set_x", train_shape, np.uint8, 
                                  maxshape=(None, train_shape[1], train_shape[2], train_shape[3]),
 			         chunks=train_shape)
+			         #chunks=(train_shape[0]/2, train_shape[1], train_shape[2], train_shape[3]))
 	hdf5_file.create_dataset("train_set_y", (len(train_addrs),), np.uint8, maxshape=(None, ), chunks=(len(train_labels),))
         hdf5_file["train_set_y"][...] = train_labels
 

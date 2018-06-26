@@ -42,6 +42,24 @@ google_drive_filename_id = {
 'validation_336_336.hdf5': '1y8BaHz_HliYnmdQevdsC8xA7QcFzBO3C',
 'test_336_336.hdf5': '1jqGWC88Nm3zkoPMPjnjoLy5ADb1E6ecF'
 
+'validation_672_672.hdf5.aa': '1l562_r8Qq0VyA5Kj0FwqFr81eyHsDyvB',
+'validation_672_672.hdf5.ab': '1Fm0oazHER3W7QpGCP_qTPqrSSP775Rqz',
+'validation_672_672.hdf5.ac': '1fCS_r2Sy_bZoe14yeDhPyYFRiVvuOkH4',
+'validation_672_672.hdf5.ad': '1W7gC4HCaYkkvh9Rv3yGp-nz_jul4tzqP',
+'validation_672_672.hdf5.ae': '1AgojsW9aXhMam3AwjPa6xd3L-E7eunBY',
+'validation_672_672.hdf5.af': '1dln3a0mGp_FBWXtWrLWvz_5l0UBGYcQ7',
+'validation_672_672.hdf5.ag': '1hX3sw9vFztjmB-xOTSwCJm747cfHJVIq',
+'validation_672_672.hdf5.ah': '1_6aieOpvhwt9UEcCjIbcXz36YpitJnkC',
+'validation_672_672.hdf5.ai': '1UWu94GHKqn0l2TpX_HVinpeFR1NZZQbl',
+'validation_672_672.hdf5.aj': '1oMd-q3AOfez31vm-gNBOEhxafK9HCr_Q',
+'validation_672_672.hdf5.ak': '1AP37Byb_mYwyR1lkom9K_GYFbXFbZQhQ',
+'validation_672_672.hdf5.al': '1GzHbGd3njhWHy7rhdm2lKpU9ShzYWcGZ',
+'validation_672_672.hdf5.am': '1KtbCTNUb6vFsAzfPCn9N3rdjK72ot1t2',
+'validation_672_672.hdf5.an': '10-foci1vuiPkGGeTji0ub1IxFvxulbII',
+'validation_672_672.hdf5.ao': '1PfNeRAYNqVcKccVbZFetT_klygBbw9Jd',
+'validation_672_672.hdf5.ap': '1h2Q1YYmYESMl16tkXS8DGfgz2tmW90TS',
+'validation_672_672.hdf5.aq': '1SmU_jlRgg6TGVm6ScaRzWC0L4wh1M5RT',
+'validation_672_672.hdf5.ar': '1D7UO122XNKC7J1a_nBm46sWMO76pNpC2'
 }
 
 # workaround 

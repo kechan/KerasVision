@@ -66,12 +66,14 @@ if __name__ == '__main__':
         indice_classes[str(i)] = c 
 
     for i, split in enumerate(['train', 'validation', 'test']):
+    #for i, split in enumerate(['validation', 'test']):
         data_path = os.path.join(data_dir, split)
 	if os.path.exists(data_path):
 	    outfile_path = os.path.join(output_dir, split + "_" + str(size) + "_" + str(size) + ".hdf5")
 
 	    train_dev_test_ratio = [0.0, 0.0, 0.0]
             train_dev_test_ratio[i] = 1.0
+            #train_dev_test_ratio[i+1] = 1.0
 
             generate_h5(data_path, labels_to_classes_dictionary=indice_classes, 
                 outfile_path=outfile_path, resize_height=size, resize_width=size, 
