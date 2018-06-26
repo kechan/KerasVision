@@ -42,6 +42,7 @@ google_drive_filename_id = {
 'validation_336_336.hdf5': '1y8BaHz_HliYnmdQevdsC8xA7QcFzBO3C',
 'test_336_336.hdf5': '1jqGWC88Nm3zkoPMPjnjoLy5ADb1E6ecF',
 
+'validation_672_672.hdf5': '1F6GwyDud2yuvq650QHYJ4Zdyn4wUN68q',
 'validation_672_672.hdf5.aa': '1l562_r8Qq0VyA5Kj0FwqFr81eyHsDyvB',
 'validation_672_672.hdf5.ab': '1Fm0oazHER3W7QpGCP_qTPqrSSP775Rqz',
 'validation_672_672.hdf5.ac': '1fCS_r2Sy_bZoe14yeDhPyYFRiVvuOkH4',
