@@ -38,6 +38,7 @@ google_drive_filename_id = {
 'train_336_336.hdf5.ab': '12FdQnhXzwqgF2pWYZqZL7xUGlcf2yjwH',
 'train_336_336.hdf5.ac': '1CjL-N-QHyzaEx2Ygd1xbJwYM0WM3SpuS',
 'train_336_336.hdf5.ad': '1h7esN7BNd8PmXGMiyL40awguR3tZ8KTM',
+'train_336_336.hdf5': '1dlXOsMb_8_aFu_znCIh3gn3EylDe0uIP',
 'validation_336_336.hdf5': '1y8BaHz_HliYnmdQevdsC8xA7QcFzBO3C',
 'test_336_336.hdf5': '1jqGWC88Nm3zkoPMPjnjoLy5ADb1E6ecF'
 
