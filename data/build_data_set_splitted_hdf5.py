@@ -42,6 +42,7 @@ parser.add_argument('--data_dir', default='original', help="Directory with the d
 parser.add_argument('--output_dir', default='original_hdf5', help="Where to write the new data")
 parser.add_argument('--classes', help="comma delimited string list of classes")
 parser.add_argument('--resize', default='-1', help='resize image to this dimension, a square')
+parser.add_argument('--subset', default='all', help='all or train, or dev+test')
 
 def process_classes(comma_sep_class_string):
     return comma_sep_class_string.split(",")
@@ -66,14 +67,18 @@ if __name__ == '__main__':
         indice_classes[str(i)] = c 
 
     for i, split in enumerate(['train', 'validation', 'test']):
-    #for i, split in enumerate(['validation', 'test']):
+	
+	if args.subset == 'dev+test' and split == 'train':
+	    continue 
+	elif args.subset == 'train' and split == 'validation':
+	    break
+	    
         data_path = os.path.join(data_dir, split)
 	if os.path.exists(data_path):
 	    outfile_path = os.path.join(output_dir, split + "_" + str(size) + "_" + str(size) + ".hdf5")
 
 	    train_dev_test_ratio = [0.0, 0.0, 0.0]
             train_dev_test_ratio[i] = 1.0
-            #train_dev_test_ratio[i+1] = 1.0
 
             generate_h5(data_path, labels_to_classes_dictionary=indice_classes, 
                 outfile_path=outfile_path, resize_height=size, resize_width=size, 

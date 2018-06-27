@@ -34,13 +34,12 @@ google_drive_filename_id = {
 'keras_resnet50_far_less_aug_conv1_d0.5_weights_acc_0.9204.h5': '1lpHe8LuP97LyoL8ceVrrSf84JDYAs9QF',
 'keras_resnet50_far_less_aug_conv1_stride1_d0.5_weights_acc_0.9204.h5': '16DUjzKQ-lN-_439vy2PAO6PZyhZhyRa5',
 
-'train_336_336.hdf5.aa': '1a2J3cH4OQnoCpK7Rv918oGCkXdpWPoia',
-'train_336_336.hdf5.ab': '12FdQnhXzwqgF2pWYZqZL7xUGlcf2yjwH',
-'train_336_336.hdf5.ac': '1CjL-N-QHyzaEx2Ygd1xbJwYM0WM3SpuS',
-'train_336_336.hdf5.ad': '1h7esN7BNd8PmXGMiyL40awguR3tZ8KTM',
 'train_336_336.hdf5': '1dlXOsMb_8_aFu_znCIh3gn3EylDe0uIP',
 'validation_336_336.hdf5': '1y8BaHz_HliYnmdQevdsC8xA7QcFzBO3C',
 'test_336_336.hdf5': '1jqGWC88Nm3zkoPMPjnjoLy5ADb1E6ecF',
+
+'336x336_cropped_merged_heads.validation_336_336.hdf5': '13QjZZnTEWxh7DEXuNPZE7Be-h1-bCA0u',
+'336x336_cropped_merged_heads.test_336_336.hdf5': '1kEpTxBF-W0klUsd9rAUEtuCAhF7F5qby',
 
 'validation_672_672.hdf5': '1F6GwyDud2yuvq650QHYJ4Zdyn4wUN68q',
 'validation_672_672.hdf5.aa': '1l562_r8Qq0VyA5Kj0FwqFr81eyHsDyvB',
