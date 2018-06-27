@@ -4,5 +4,5 @@
 pip install -U -q PyDrive
 pip install tqdm
 
-pip3 install torch
-pip3 install torchvision
+#pip3 install torch
+#pip3 install torchvision
