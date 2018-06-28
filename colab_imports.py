@@ -33,6 +33,7 @@ google_drive_filename_id = {
 'keras_resnet50_far_less_aug_fc1_d0.5_weights_acc_0.9204.h5': '1SXVJlDbT6ij_qLrXOxIAPkCHvq8TcI21',
 'keras_resnet50_far_less_aug_conv1_d0.5_weights_acc_0.9204.h5': '1lpHe8LuP97LyoL8ceVrrSf84JDYAs9QF',
 'keras_resnet50_far_less_aug_conv1_stride1_d0.5_weights_acc_0.9204.h5': '16DUjzKQ-lN-_439vy2PAO6PZyhZhyRa5',
+'keras_resnet50_336_far_less_aug_conv1_stride1_d0.5_weights_acc_0.9204.h5': '1wAu1w4ARr8iYIL7vobxF5FIEZBvcyv_A',
 
 'train_336_336.hdf5': '1dlXOsMb_8_aFu_znCIh3gn3EylDe0uIP',
 'validation_336_336.hdf5': '1y8BaHz_HliYnmdQevdsC8xA7QcFzBO3C',
