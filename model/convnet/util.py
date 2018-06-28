@@ -39,7 +39,7 @@ def transform_pretrained_resnet_fc_2_conv(resnet_model, dropout=None):
 
 def transform_resnet50_to_sliding_window_conv(resnet_model, dropout=None):
 
-    conv_preds = resnet_model.get_layer['conv_preds']
+    conv_preds = resnet_model.get_layer('conv_preds')
   
     assert conv_preds is not None, "Expecting a layer named conv_preds"
 
