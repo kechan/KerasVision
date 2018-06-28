@@ -36,3 +36,35 @@ def transform_pretrained_resnet_fc_2_conv(resnet_model, dropout=None):
     conv_preds.set_weights([dense_1_weights[None, None,:,:], dense_1_bias])
     
     return model
+
+def transform_resnet50_to_sliding_window_conv(resnet_model, dropout=None):
+
+    conv_preds = resnet_model.get_layer['conv_preds']
+  
+    assert conv_preds is not None, "Expecting a layer named conv_preds"
+
+    # get the weight from the last conv1x1 layer 'conv_preds', we need this later.
+    conv_preds_weights = conv_preds.get_weights() 
+
+    input_layer = resnet_model.layers[0].layers[0]
+    layer_before_avgpool = resnet_model.layers[0].layers[-2]
+
+    model_before_avgpool = Model(inputs = input_layer.input, outputs=layer_before_avgpool.output)
+
+    sliding_window_model = Sequential()
+    
+    sliding_window_model.add(model_before_avgpool)
+    sliding_window_model.add(AveragePooling2D(pool_size=(7, 7), strides=(1, 1)))  # swap in (1,1) stride
+
+    if dropout is not None:
+        sliding_window_model.add(Dropout(dropout))
+
+    sliding_window_model.add(Conv2D(7, (1, 1), activation='softmax', name='conv_preds'))
+
+    # load back in the weights for last conv1x1 layer 'conv_preds'
+
+    new_conv_preds = sliding_window_model.get_layer('conv_preds')
+
+    new_conv_preds.set_weights(conv_preds_weights)
+
+    return sliding_window_model
