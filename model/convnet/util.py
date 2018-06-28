@@ -1,5 +1,5 @@
 from keras.models import Sequential, Model
-from keras.layers import Dense, Conv2D, Dropout
+from keras.layers import Dense, Conv2D, Dropout, AveragePooling2D
 from keras.applications import ResNet50
 
 def transform_pretrained_resnet_fc_2_conv(resnet_model, dropout=None):
