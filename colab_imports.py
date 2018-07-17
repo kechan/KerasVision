@@ -60,7 +60,10 @@ google_drive_filename_id = {
 'validation_672_672.hdf5.ao': '1PfNeRAYNqVcKccVbZFetT_klygBbw9Jd',
 'validation_672_672.hdf5.ap': '1h2Q1YYmYESMl16tkXS8DGfgz2tmW90TS',
 'validation_672_672.hdf5.aq': '1SmU_jlRgg6TGVm6ScaRzWC0L4wh1M5RT',
-'validation_672_672.hdf5.ar': '1D7UO122XNKC7J1a_nBm46sWMO76pNpC2'
+'validation_672_672.hdf5.ar': '1D7UO122XNKC7J1a_nBm46sWMO76pNpC2',
+
+'yolo.h5': '1hisBnWBFIAtPk4oZHAQ5h7XK7NVAGdcl'
+
 }
 
 # workaround 

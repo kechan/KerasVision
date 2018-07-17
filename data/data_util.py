@@ -6,6 +6,9 @@ from scipy import ndimage
 import numpy as np
 import h5py
 
+import imageio, cv2
+from skimage.transform import rescale, resize, downscale_local_mean
+
 from keras.preprocessing import image
 import matplotlib.pyplot as plt
 
@@ -16,7 +19,7 @@ def reverse_dict(mydict):
 
 ### helper function to bundle labeled images (folder-label way) into hdf5 format
 ### output is train_set_x, train_set_y
-def generate_h5(data_path, labels_to_classes_dictionary, outfile_path=None, shuffle_data=True, resize_height=224, resize_width=224, data_order='tf', train_dev_test_ratio=[0.6, 0.2, 0.2]):
+def generate_h5(data_path, labels_to_classes_dictionary, outfile_path=None, shuffle_data=True, resize_height=224, resize_width=224, data_order='tf', train_dev_test_ratio=[0.6, 0.2, 0.2], bbox_csv=None):
 
     def label_to_class(label):
         return labels_to_classes_dictionary[str(label)]
@@ -120,8 +123,10 @@ def generate_h5(data_path, labels_to_classes_dictionary, outfile_path=None, shuf
             print 'Train data: {}/{}'.format(i, len(train_addrs))
         # read an image and resize to (resize_height, resize_width)
         addr = train_addrs[i]
-        img = ndimage.imread(addr, flatten=False)
-        img = scipy.misc.imresize(img, size=(resize_height, resize_width))
+        #img = ndimage.imread(addr, flatten=False)
+        #img = scipy.misc.imresize(img, size=(resize_height, resize_width))
+        img = imageio.imread(addr)
+	img = resize(img, output_shape=(resize_height, resize_width), preserve_range=True, anti_aliasing=True)
     
         # add any image pre-processing here
         # if the data order is Theano, axis orders should change
@@ -141,8 +146,10 @@ def generate_h5(data_path, labels_to_classes_dictionary, outfile_path=None, shuf
             print 'Validation data: {}/{}'.format(i, len(dev_addrs))
         # read an image and resize to (resize_height, resize_width)
         addr = dev_addrs[i]
-        img = ndimage.imread(addr, flatten=False)
-        img = scipy.misc.imresize(img, size=(resize_height, resize_width))
+        #img = ndimage.imread(addr, flatten=False)
+        #img = scipy.misc.imresize(img, size=(resize_height, resize_width))
+	img = imageio.imread(addr)
+	img = resize(img, output_shape=(resize_height, resize_width), preserve_range=True, anti_aliasing=True)
     
         # add any image pre-processing here
         # if the data order is Theano, axis orders should change
@@ -162,8 +169,10 @@ def generate_h5(data_path, labels_to_classes_dictionary, outfile_path=None, shuf
         # read an image and resize to (resize_height, resize_width)
     
         addr = test_addrs[i]
-        img = ndimage.imread(addr, flatten=False)
-        img = scipy.misc.imresize(img, size=(resize_height, resize_width))
+        #img = ndimage.imread(addr, flatten=False)
+        #img = scipy.misc.imresize(img, size=(resize_height, resize_width))
+	img = imageio.imread(addr)
+	img = resize(img, output_shape=(resize_height, resize_width), preserve_range=True, anti_aliasing=True)
     
         # add any image pre-processing here
         # if the data order is Theano, axis orders should change
