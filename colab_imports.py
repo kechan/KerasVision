@@ -62,8 +62,8 @@ google_drive_filename_id = {
 'validation_672_672.hdf5.aq': '1SmU_jlRgg6TGVm6ScaRzWC0L4wh1M5RT',
 'validation_672_672.hdf5.ar': '1D7UO122XNKC7J1a_nBm46sWMO76pNpC2',
 
-'yolo.h5': '1hisBnWBFIAtPk4oZHAQ5h7XK7NVAGdcl'
-
+'yolo.h5': '1hisBnWBFIAtPk4oZHAQ5h7XK7NVAGdcl',
+'test.jpg': '1K8QDVMWdFPNRnaxRwtOz5BgrNyQCLcGt'
 }
 
 # workaround 
