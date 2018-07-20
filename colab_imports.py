@@ -66,7 +66,8 @@ google_drive_filename_id = {
 'test.jpg': '1K8QDVMWdFPNRnaxRwtOz5BgrNyQCLcGt',
 'yad2k.tar': '1qmndyzf5cXcL1sQ0b9QG80UwTquowzyq',
 'coco_classes.txt': '17-s22pkaOI-MGQwtYb_07d-JoSWsOXQM',
-'yolo_anchors.txt': '1fH2IEQRyV7s9S7TB0Wu1IqusO5s1X2Ni'
+'yolo_anchors.txt': '1fH2IEQRyV7s9S7TB0Wu1IqusO5s1X2Ni',
+'car_detection_for_auto_driving_images.tar': '1o_qpLpKX-d2kjCEJKl5Z0r7OlD_5sy0x'
 }
 
 # workaround 
