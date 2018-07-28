@@ -53,7 +53,7 @@ def build_model(input_shape=(224, 224, 3), nb_classes=6, params=None):
 
     model.add(Flatten())
 
-    if params.dropout is not None:
+    if params is not None and params.dropout is not None:
         model.add(Dropout(params.dropout))
 
     model.add(Dense(512, activation='relu'))
