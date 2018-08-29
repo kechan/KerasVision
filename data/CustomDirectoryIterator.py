@@ -7,4 +7,4 @@ class DirectoryIteratorWith1x1ConvTarget(DirectoryIterator):
 
         reshaped_batch_y = batch_y[:, None, None, :]
 
-	return batch_x, reshaped_batch_y
+        return batch_x, reshaped_batch_y

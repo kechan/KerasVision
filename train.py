@@ -56,7 +56,7 @@ def getDataSetType(data_dir):
         assert len([f for f in hdf5_files if 'test' in f]) == 1, "Expecting a file with test*"
         assert len([f for f in hdf5_files if 'validation' in f or 'dev' in f]) == 1,  "Expecting a file with validation*, or dev*"
  
-	return "hdf5"
+        return "hdf5"
 
     if os.path.isdir(os.path.join(data_dir, 'train')) and (os.path.isdir(os.path.join(data_dir, 'validation')) or os.path.isdir(os.path.join(data_dir, 'test'))):
 
@@ -131,11 +131,11 @@ def compile_model(model, params):
         model.compile(loss=params.loss, optimizer=params.optimizer, metrics=['accuracy'])
     else:
         if params.optimizer == 'rmsprop':
-	    model.compile(loss=params.loss, optimizer=optimizers.RMSprop(lr=params.learning_rate, decay=params.decay), metrics=['accuracy'])
-	elif params.optimizer == 'adam':
-	    model.compile(loss=params.loss, optimizer=optimizers.Adam(lr=params.learning_rate, decay=params.decay), metrics=['accuracy'])
-	else:
-	    pass
+            model.compile(loss=params.loss, optimizer=optimizers.RMSprop(lr=params.learning_rate, decay=params.decay), metrics=['accuracy'])
+        elif params.optimizer == 'adam':
+            model.compile(loss=params.loss, optimizer=optimizers.Adam(lr=params.learning_rate, decay=params.decay), metrics=['accuracy'])
+        else:
+            pass
 
 if __name__ == '__main__':
     # Set the random seed for the whole graph for reproductible experiments
@@ -196,22 +196,22 @@ if __name__ == '__main__':
         params.train_sample_size = len(train_set_y)
         params.validation_sample_size = len(dev_set_y)
 
-	indice_classes = create_indice_to_classes_dictionary(classes)
+        indice_classes = create_indice_to_classes_dictionary(classes)
 
     elif dataset_type == 'directories': 
 
         train_generator, validation_generator = configure_generator_for_dir(data_dir, params)
 
-	params.train_sample_size = train_generator.samples
+        params.train_sample_size = train_generator.samples
         params.validation_sample_size = validation_generator.samples
 
-	class_indices = train_generator.class_indices
+        class_indices = train_generator.class_indices
 
-	indice_classes = {str(value): key for key, value in class_indices.items()}
+        indice_classes = {str(value): key for key, value in class_indices.items()}
 
         classes = class_indices.keys()     # array of classes
 
-	params.classes = classes
+        params.classes = classes
 
 
     else:
@@ -239,7 +239,7 @@ if __name__ == '__main__':
     if model is None:     
 
         if dataset_type == 'hdf5':
-	    dim = train_set_x.shape[1]
+            dim = train_set_x.shape[1]
         else:
             dim = params.image_size
 
@@ -248,10 +248,10 @@ if __name__ == '__main__':
             from model.logistic_regression import build_model
             model = build_model(input_shape=(dim, dim, 3), nb_classes=len(indice_classes), params=params)
 
-	elif params.model_type == "feedforward":
+        elif params.model_type == "feedforward":
 
-	    from model.feedforward import build_model
-	    model = build_model(input_shape=(dim, dim, 3), nb_classes=len(indice_classes), params=params)
+            from model.feedforward import build_model
+            model = build_model(input_shape=(dim, dim, 3), nb_classes=len(indice_classes), params=params)
 
         elif params.model_type == "convnet.chollet":
 
@@ -268,15 +268,15 @@ if __name__ == '__main__':
             from model.convnet.galaxy import build_model
             model = build_model(input_shape=train_set_x.shape[1:], nb_classes=len(indice_classes), params=params)
 
-	elif params.model_type == 'convnet.resnet50':
+        elif params.model_type == 'convnet.resnet50':
 
-	    from model.convnet.resnet50 import build_model
-	    model = build_model(input_shape=(dim, dim, 3), nb_classes=len(indice_classes), params=params)
+            from model.convnet.resnet50 import build_model
+            model = build_model(input_shape=(dim, dim, 3), nb_classes=len(indice_classes), params=params)
 
         elif params.model_type == 'convnet.resnet50.noshape':
 
             from model.convnet.resnet50 import build_model
-	    model = build_model(input_shape=None, nb_classes=len(indice_classes), params=params)
+            model = build_model(input_shape=None, nb_classes=len(indice_classes), params=params)
 
     logging.info("Input: " + str(model.inputs))
     model.summary(print_fn=logging.info)

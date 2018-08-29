@@ -80,21 +80,21 @@ def generate_h5(data_path, labels_to_classes_dictionary, outfile_path=None, shuf
                                  maxshape=(None, train_shape[1], train_shape[2], train_shape[3]),
 			         chunks=train_shape)
 			         #chunks=(train_shape[0]/2, train_shape[1], train_shape[2], train_shape[3]))
-	hdf5_file.create_dataset("train_set_y", (len(train_addrs),), np.uint8, maxshape=(None, ), chunks=(len(train_labels),))
+        hdf5_file.create_dataset("train_set_y", (len(train_addrs),), np.uint8, maxshape=(None, ), chunks=(len(train_labels),))
         hdf5_file["train_set_y"][...] = train_labels
 
     if dev_shape[0] > 0:
         hdf5_file.create_dataset("dev_set_x", dev_shape, np.uint8, 
                                  maxshape=(None, dev_shape[1], dev_shape[2], dev_shape[3]),
 				 chunks=dev_shape)
-	hdf5_file.create_dataset("dev_set_y", (len(dev_addrs),), np.uint8, maxshape=(None, ), chunks=(len(dev_labels),))
+        hdf5_file.create_dataset("dev_set_y", (len(dev_addrs),), np.uint8, maxshape=(None, ), chunks=(len(dev_labels),))
         hdf5_file["dev_set_y"][...] = dev_labels
 
     if test_shape[0] > 0:
         hdf5_file.create_dataset("test_set_x", test_shape, np.uint8, 
                                  maxshape=(None, test_shape[1], test_shape[2], test_shape[3]),
 				 chunks=test_shape)
-	hdf5_file.create_dataset("test_set_y", (len(test_addrs),), np.uint8, maxshape=(None, ), chunks=(len(test_labels),))
+        hdf5_file.create_dataset("test_set_y", (len(test_addrs),), np.uint8, maxshape=(None, ), chunks=(len(test_labels),))
         hdf5_file["test_set_y"][...] = test_labels
 
     #hdf5_file.create_dataset("train_mean", train_shape[1:], np.float32)
@@ -120,13 +120,13 @@ def generate_h5(data_path, labels_to_classes_dictionary, outfile_path=None, shuf
     for i in range(len(train_addrs)):
         # print how many images are saved every 100 images
         if i % 100 == 0 and i > 1:
-            print 'Train data: {}/{}'.format(i, len(train_addrs))
+            print('Train data: {}/{}'.format(i, len(train_addrs)))
         # read an image and resize to (resize_height, resize_width)
         addr = train_addrs[i]
         #img = ndimage.imread(addr, flatten=False)
         #img = scipy.misc.imresize(img, size=(resize_height, resize_width))
         img = imageio.imread(addr)
-	img = resize(img, output_shape=(resize_height, resize_width), preserve_range=True, anti_aliasing=True)
+        img = resize(img, output_shape=(resize_height, resize_width), preserve_range=True, anti_aliasing=True)
     
         # add any image pre-processing here
         # if the data order is Theano, axis orders should change
@@ -137,19 +137,19 @@ def generate_h5(data_path, labels_to_classes_dictionary, outfile_path=None, shuf
         hdf5_file["train_set_x"][i, ...] = img[:,:,:3]
         #mean += img / float(len(train_labels))
 
-	train_idx_filenames.append(addr)
+        train_idx_filenames.append(addr)
      
     # loop over dev addresses
     for i in range(len(dev_addrs)):
         # print how many images are saved every 100 images
         if i % 100 == 0 and i > 1:
-            print 'Validation data: {}/{}'.format(i, len(dev_addrs))
+            print('Validation data: {}/{}'.format(i, len(dev_addrs)))
         # read an image and resize to (resize_height, resize_width)
         addr = dev_addrs[i]
         #img = ndimage.imread(addr, flatten=False)
         #img = scipy.misc.imresize(img, size=(resize_height, resize_width))
-	img = imageio.imread(addr)
-	img = resize(img, output_shape=(resize_height, resize_width), preserve_range=True, anti_aliasing=True)
+        img = imageio.imread(addr)
+        img = resize(img, output_shape=(resize_height, resize_width), preserve_range=True, anti_aliasing=True)
     
         # add any image pre-processing here
         # if the data order is Theano, axis orders should change
@@ -165,14 +165,14 @@ def generate_h5(data_path, labels_to_classes_dictionary, outfile_path=None, shuf
     for i in range(len(test_addrs)):
         # print how many images are saved every 100 images
         if i % 100 == 0 and i > 1:
-            print 'Test data: {}/{}'.format(i, len(test_addrs))
+            print('Test data: {}/{}'.format(i, len(test_addrs)))
         # read an image and resize to (resize_height, resize_width)
     
         addr = test_addrs[i]
         #img = ndimage.imread(addr, flatten=False)
         #img = scipy.misc.imresize(img, size=(resize_height, resize_width))
-	img = imageio.imread(addr)
-	img = resize(img, output_shape=(resize_height, resize_width), preserve_range=True, anti_aliasing=True)
+        img = imageio.imread(addr)
+        img = resize(img, output_shape=(resize_height, resize_width), preserve_range=True, anti_aliasing=True)
     
         # add any image pre-processing here
         # if the data order is Theano, axis orders should change
@@ -182,7 +182,7 @@ def generate_h5(data_path, labels_to_classes_dictionary, outfile_path=None, shuf
 
         hdf5_file["test_set_x"][i, ...] = img[:,:,:3]
 
-	test_idx_filenames.append(addr)
+        test_idx_filenames.append(addr)
     
 
     hdf5_file["train_idx_filenames"][...] = np.array(train_idx_filenames)
@@ -200,7 +200,7 @@ def load_all_data(hdf5_filename):
         train_set_y_orig = np.array(dataset["train_set_y"][:])
     else:
         train_set_x_orig = None
-	train_set_y_orig = None
+        train_set_y_orig = None
 
     if "dev_set_x" in dataset.keys() and "dev_set_y" in dataset.keys():
         dev_set_x_orig = np.array(dataset["dev_set_x"][:])

@@ -3,7 +3,7 @@
 
 import os
 from keras.preprocessing.image import ImageDataGenerator
-from augmentation.CustomImageDataGenerator import * 
+from .augmentation.CustomImageDataGenerator import * 
 
 
 def configure_generator_for_dir(data_dir, params):
@@ -31,17 +31,17 @@ def configure_generator_for_dir(data_dir, params):
         assert os.path.exists(train_dir) and os.path.isdir(train_dir), "train dir not found"
 
         validation_dir = os.path.join(data_dir, "validation")
-	assert os.path.exists(validation_dir) and os.path.isdir(validation_dir), "validation dir not found"
+        assert os.path.exists(validation_dir) and os.path.isdir(validation_dir), "validation dir not found"
 
-	test_dir = os.path.join(data_dir, "test")
-	assert os.path.exists(test_dir) and os.path.isdir(test_dir), "test dir not found"
+        test_dir = os.path.join(data_dir, "test")
+        assert os.path.exists(test_dir) and os.path.isdir(test_dir), "test dir not found"
 
     class_mode = 'categorical'
     if hasattr(params, 'optimizer'):
         if params.optimizer.startswith('binary'):
-	    class_mode = 'binary'
-	elif params.optimizer.startswith('categorical'):
-	    class_mode = 'categorical'
+            class_mode = 'binary'
+        elif params.optimizer.startswith('categorical'):
+            class_mode = 'categorical'
 
     if params.model_type.endswith('.noshape'):
         train_generator = train_datagen.flow_from_directory_with_1x1_conv_target(train_dir, 
@@ -90,8 +90,8 @@ def configure_generator(train_set_x, train_set_y, dev_set_x, dev_set_y, params):
 
     if params.model_type.endswith('.noshape'):
         reshaped_train_set_y = train_set_y[:,None,None,:]
-	reshaped_dev_set_y = dev_set_y[:,None,None,:]
-	train_generator = train_datagen.flow(train_set_x, reshaped_train_set_y, batch_size=batch_size)
+        reshaped_dev_set_y = dev_set_y[:,None,None,:]
+        train_generator = train_datagen.flow(train_set_x, reshaped_train_set_y, batch_size=batch_size)
         validation_generator = test_datagen.flow(dev_set_x, reshaped_dev_set_y, batch_size=batch_size)
     else:
         train_generator = train_datagen.flow(train_set_x, train_set_y, batch_size=batch_size)

@@ -9,7 +9,7 @@
 import os
 import glob
 import random
-from data_util import *
+from .data_util import *
 
 #target_label = {"0": "UNK", "1": "5c", "2": "10c", "3": "25c", "4": "$1", "5": "$2"}
 #label_target = reverse_dict(target_label)
