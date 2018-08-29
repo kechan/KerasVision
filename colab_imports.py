@@ -80,7 +80,8 @@ google_drive_filename_id = {
 'pascal_voc_07_12_aai': '1BYZ5wu0NV4Pe4-COHpo6kh-X91PaZzHV',
 'pascal_voc_07_12_aaj': '1wc5MPG4F5L3oUtlxFo1_oe9L8MgIUdRG',
 'pascal_voc_07_12_aak': '1CfgYELpFv32AaQ-8idP6PzsdVCwcjLww',
-'pascal_voc_07_12_aal': '1UJkKPFepsIT0LgloC6DCrnLxxcD2y0jB'
+'pascal_voc_07_12_aal': '1UJkKPFepsIT0LgloC6DCrnLxxcD2y0jB',
+'pascal_voc_07_12.hdf5': '1cwy6FIDKOK-fHqJrGEUtlBl4j1d5Xdjy'
 
 }
 
