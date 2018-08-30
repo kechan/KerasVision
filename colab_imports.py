@@ -67,6 +67,7 @@ google_drive_filename_id = {
 'giraffe.jpg': '1eYxEcakDfV6nILK6xVLJc1XNJRCSfT20',
 'yad2k.tar': '1qmndyzf5cXcL1sQ0b9QG80UwTquowzyq',
 'coco_classes.txt': '17-s22pkaOI-MGQwtYb_07d-JoSWsOXQM',
+'pascal_classes.txt': '180-ufE9INr1derRcenRZyTbCzHI9cKME',
 'yolo_anchors.txt': '1fH2IEQRyV7s9S7TB0Wu1IqusO5s1X2Ni',
 'car_detection_for_auto_driving_images.tar': '1o_qpLpKX-d2kjCEJKl5Z0r7OlD_5sy0x',
 'pascal_voc_07_12.hdf5': '1cwy6FIDKOK-fHqJrGEUtlBl4j1d5Xdjy'
