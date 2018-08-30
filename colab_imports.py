@@ -64,23 +64,11 @@ google_drive_filename_id = {
 
 'yolo.h5': '1hisBnWBFIAtPk4oZHAQ5h7XK7NVAGdcl',
 'test.jpg': '1K8QDVMWdFPNRnaxRwtOz5BgrNyQCLcGt',
+'giraffe.jpg': '1eYxEcakDfV6nILK6xVLJc1XNJRCSfT20',
 'yad2k.tar': '1qmndyzf5cXcL1sQ0b9QG80UwTquowzyq',
 'coco_classes.txt': '17-s22pkaOI-MGQwtYb_07d-JoSWsOXQM',
 'yolo_anchors.txt': '1fH2IEQRyV7s9S7TB0Wu1IqusO5s1X2Ni',
 'car_detection_for_auto_driving_images.tar': '1o_qpLpKX-d2kjCEJKl5Z0r7OlD_5sy0x',
-
-'pascal_voc_07_12_aaa': '1vrkAVGG4RlAYnF4oFlsOp9fv8gfn9zaM',
-'pascal_voc_07_12_aab': '1oqosqZr-OzoGfcGXIsynqJIHVRzxA3RP',
-'pascal_voc_07_12_aac': '1qo9czPAeBY3cs4ApSgE0m5mzZq-Ypq6c',
-'pascal_voc_07_12_aad': '1JhXRZ3ufEWaWBvtSG0BGJBJi_41UURVF',
-'pascal_voc_07_12_aae': '15LPCdWrsTad2v1aJytdFISSWA_9Dp2zF',
-'pascal_voc_07_12_aaf': '1iqI8DX4h6I89XW3sUbI5hvZIspP7EAuy',
-'pascal_voc_07_12_aag': '1lXuGjvycKLux1U_V49EOf0yyR1P5yDkA',
-'pascal_voc_07_12_aah': '1GDkGucSpNBcPh93QzYMNGPCMOcawcLnP',
-'pascal_voc_07_12_aai': '1BYZ5wu0NV4Pe4-COHpo6kh-X91PaZzHV',
-'pascal_voc_07_12_aaj': '1wc5MPG4F5L3oUtlxFo1_oe9L8MgIUdRG',
-'pascal_voc_07_12_aak': '1CfgYELpFv32AaQ-8idP6PzsdVCwcjLww',
-'pascal_voc_07_12_aal': '1UJkKPFepsIT0LgloC6DCrnLxxcD2y0jB',
 'pascal_voc_07_12.hdf5': '1cwy6FIDKOK-fHqJrGEUtlBl4j1d5Xdjy'
 
 }
