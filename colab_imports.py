@@ -70,7 +70,8 @@ google_drive_filename_id = {
 'pascal_classes.txt': '180-ufE9INr1derRcenRZyTbCzHI9cKME',
 'yolo_anchors.txt': '1fH2IEQRyV7s9S7TB0Wu1IqusO5s1X2Ni',
 'car_detection_for_auto_driving_images.tar': '1o_qpLpKX-d2kjCEJKl5Z0r7OlD_5sy0x',
-'pascal_voc_07_12.hdf5': '1cwy6FIDKOK-fHqJrGEUtlBl4j1d5Xdjy'
+'pascal_voc_07_12.hdf5': '1cwy6FIDKOK-fHqJrGEUtlBl4j1d5Xdjy',
+'overfit_weights.h5': '1HGrGDhjoAcRY9kht9Y4_ZztfBn3kmaCU'
 
 }
 
