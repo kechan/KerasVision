@@ -72,8 +72,8 @@ google_drive_filename_id = {
 'car_detection_for_auto_driving_images.tar': '1o_qpLpKX-d2kjCEJKl5Z0r7OlD_5sy0x',
 'pascal_voc_07_12.hdf5': '1cwy6FIDKOK-fHqJrGEUtlBl4j1d5Xdjy',
 'overfit_weights.h5': '1yvfNNzgpCL2VY57jjz-yp0OBK-x_ryIk',
-'overfit_yad2k_yolo_model.h5': '14WkdnTU1u2oxONO-JnPpmycwOR9x9j72'
-
+'overfit_yad2k_yolo_model.h5': '14WkdnTU1u2oxONO-JnPpmycwOR9x9j72',
+'coursera_yolo_model_random_weights.h5': '1rIppSsbZg_QFFSGH9v5r-boNc9oAo11w'
 }
 
 # workaround 
