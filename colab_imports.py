@@ -10,6 +10,10 @@ google_drive_filename_id = {
 '224x224_original_and_cropped_merged_heads.validation_224_224.hdf5': '1vfOXhk_lgEUFS7hDgaaX8Os2comYuGL8',
 '224x224_original_and_cropped_merged_heads.test_224_224.hdf5': '1EhauFTRd8QUddBAGHl5mgGWBEZplxjWK',
 
+'224x224_original_and_cropped_merged_heads_bbox.train_224_224.hdf5': '1l3AqcXaFoJDX1lPmOO2gIUQt83Rp0NHS',
+'224x224_original_and_cropped_merged_heads_bbox.validation_224_224.hdf5': '1KYrLnz00LWIawV_lbMtsJfTFqVJwL1it',
+'224x224_original_and_cropped_merged_heads_bbox.test_224_224.hdf5': '1kR1QioJsYRhba2jK_51u1nOItuEaU5Co',
+
 '150x150_cropped_merged_heads_hdf5.tar.gz': '1vXZGV3WUmGPrUTaO5NhdVndc36McTdbj',
 'cropped_merged_heads_resized_224.tar.gz': '1SHVVSWY3H7P6VpqE-g3VVpmNdz_299AT',
 'cropped_merged_heads_resized_512.tar.gz': '1LARMS0JatAEf8RcBztYU3EMntEdZ-8kP',
