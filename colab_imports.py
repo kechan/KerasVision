@@ -78,7 +78,9 @@ google_drive_filename_id = {
 'overfit_yad2k_yolo_model.h5': '14WkdnTU1u2oxONO-JnPpmycwOR9x9j72',
 'coursera_yolo_model_random_weights.h5': '1rIppSsbZg_QFFSGH9v5r-boNc9oAo11w',
 'coursera_yolo_model_overfit.h5': '1dG_mGP-jQfr0xga7vBJeimm0yPRVjjZH',
-'coursera_tensorflow_keras_yolo_model_overfit.h5': '13YhMOd4r392Dzk9wShkg9BTta04CelLa'
+'coursera_tensorflow_keras_yolo_model_overfit.h5': '13YhMOd4r392Dzk9wShkg9BTta04CelLa',
+
+'dev_keras_resnet50_localization.h5': '1ibW7wET4Dvp9WdAXTfZT2vVtR6xPHgO9'
 }
 
 # workaround 
