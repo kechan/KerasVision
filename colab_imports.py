@@ -80,7 +80,7 @@ google_drive_filename_id = {
 'coursera_yolo_model_overfit.h5': '1dG_mGP-jQfr0xga7vBJeimm0yPRVjjZH',
 'coursera_tensorflow_keras_yolo_model_overfit.h5': '13YhMOd4r392Dzk9wShkg9BTta04CelLa',
 
-'dev_keras_resnet50_localization.h5': '1go8Nb5uHPXbK-jU3KVIUaRFs3ZUq4Gsk'
+'dev_keras_resnet50_localization.h5': '1AbQb2kvrkv9CRnJFw1y-pliq9N8BZnrI'
 }
 
 # workaround 
