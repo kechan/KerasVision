@@ -60,10 +60,8 @@ google_drive_filename_id = {
 'pascal_voc_07_12.hdf5': '1cwy6FIDKOK-fHqJrGEUtlBl4j1d5Xdjy',
 'coursera_yolo_model_random_weights.h5': '1rIppSsbZg_QFFSGH9v5r-boNc9oAo11w',
 'coursera_yolo_model_overfit.h5': '1dG_mGP-jQfr0xga7vBJeimm0yPRVjjZH',
-'coursera_tensorflow_keras_yolo_model_overfit.h5': '13YhMOd4r392Dzk9wShkg9BTta04CelLa',
+'coursera_tensorflow_keras_yolo_model_overfit.h5': '13YhMOd4r392Dzk9wShkg9BTta04CelLa'
 
-'dev_keras_resnet50_localization.h5': '1EhxcocgIi7q1brKrhocXfkBLg3L4s58h',
-'dev_keras_resnet50_localization.overfit.h5': '1vVCNhj0mLpFwU-1ZN2Crp6db2jKJ4667'
 }
 
 # workaround 
