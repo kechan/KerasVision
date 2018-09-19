@@ -58,7 +58,6 @@ google_drive_filename_id = {
 'yolo_anchors.txt': '1fH2IEQRyV7s9S7TB0Wu1IqusO5s1X2Ni',
 'car_detection_for_auto_driving_images.tar': '1o_qpLpKX-d2kjCEJKl5Z0r7OlD_5sy0x',
 'pascal_voc_07_12.hdf5': '1cwy6FIDKOK-fHqJrGEUtlBl4j1d5Xdjy',
-'overfit_yad2k_yolo_model.h5': '14WkdnTU1u2oxONO-JnPpmycwOR9x9j72',
 'coursera_yolo_model_random_weights.h5': '1rIppSsbZg_QFFSGH9v5r-boNc9oAo11w',
 'coursera_yolo_model_overfit.h5': '1dG_mGP-jQfr0xga7vBJeimm0yPRVjjZH',
 'coursera_tensorflow_keras_yolo_model_overfit.h5': '13YhMOd4r392Dzk9wShkg9BTta04CelLa',
@@ -90,6 +89,37 @@ def plot_loss_accuracy(history):
 
   plt.plot(epochs, acc, 'bo', label='Training acc')
   plt.plot(epochs, val_acc, 'b', label='Validation acc')
+  plt.title('Training and validation accuracy')
+  #plt.legend(loc='upper left')
+  plt.legend(loc='best')
+  plt.grid()
+
+
+  # Plotting Loss vs Epoch curve
+  plt.figure(figsize=(8, 8))
+
+  plt.plot(epochs, loss, 'bo', label='Training loss')
+  plt.plot(epochs, val_loss, 'b', label='Validation loss')
+  plt.title('Training and validation loss')
+  #plt.legend()
+  plt.legend(loc='best')
+  plt.grid()
+
+
+def plot_loss_and_metrics(history, metric_name):
+  metric = history[metric_name]
+  val_metric = history['val_' + metric_name]
+
+  loss = history['loss']
+  val_loss = history['val_loss']
+
+  epochs = range(len(metric))
+
+  # Plotting Accuracy vs Epoch curve
+  plt.figure(figsize=(8, 8))
+
+  plt.plot(epochs, metric, 'bo', label='Training acc')
+  plt.plot(epochs, val_metric, 'b', label='Validation acc')
   plt.title('Training and validation accuracy')
   #plt.legend(loc='upper left')
   plt.legend(loc='best')
