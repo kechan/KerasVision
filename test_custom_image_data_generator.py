@@ -59,11 +59,16 @@ def test_custom_image_data_generator_for_dir(directory_path):
 					contrast_stretching=True
 					)
 
-    preview_num = 5
+    preview_num = 2
     i = 0
-    for batch, _ in data_gen.flow_from_directory_with_1x1_conv_target(os.path.join(directory_path, 'train'), target_size = (224, 224), class_mode = 'categorical', batch_size = 32):
+    for batch_imgs, batch_labels in data_gen.flow_from_directory_with_1x1_conv_target(os.path.join(directory_path, 'train'), 
+                                                                      target_size = (224, 224), 
+								      class_mode = 'categorical', 
+								      batch_size = 32):
         plt.figure()
-	imgplot = plt.imshow(batch[0])
+	imgplot = plt.imshow(batch_imgs[0])
+	#print(batch_imgs.shape)
+        print(batch_labels[0])
 
 	i += 1
         if i % preview_num == 0:
@@ -77,8 +82,8 @@ if __name__ == "__main__":
     home_dir = os.getenv("HOME")
     mount_dir = "/Volumes/My Mac Backup"
 
-    project_dir = os.path.join(home_dir, "Documents", "CoinSee")
-    #project_dir = os.path.join(mount_dir, "CoinSee")
+    #project_dir = os.path.join(home_dir, "Documents", "CoinSee")
+    project_dir = os.path.join(mount_dir, "CoinSee")
     
     top_data_dir = os.path.join(project_dir, "data")
 
