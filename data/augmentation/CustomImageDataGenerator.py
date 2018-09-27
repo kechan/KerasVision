@@ -5,23 +5,16 @@ from keras.preprocessing import image
 from PIL import ImageDraw, ImageFont, ImageFilter
 from data.CustomDirectoryIterator import DirectoryIteratorWith1x1ConvTarget
 
-# import matplotlib.pyplot as plt
-
-
 class CustomImageDataGenerator(ImageDataGenerator):
 
     def __init__(self, rot90=False, gaussian_blur_range=None, color_shift=None, contrast_stretching=False, histogram_equalization=False, adaptive_equalization=False, cut_out=None, *args, **kwargs):
 
         self.rot90 = rot90
-
         self.gaussian_blur_range = gaussian_blur_range
-
         self.color_shift = color_shift
-
         self.contrast_stretching = contrast_stretching
         self.histogram_equalization = histogram_equalization
         self.adaptive_equalization = adaptive_equalization
-
         self.cut_out = cut_out
 
         ImageDataGenerator.__init__(self, *args, **kwargs)
@@ -77,23 +70,11 @@ class CustomImageDataGenerator(ImageDataGenerator):
         return x
 
     def perform_rot90(self, x):
-        return np.rot90(x, k=np.random.randint(4), axes=[0, 1])
+        return perform_rot90(x)
 
 
     def perform_color_shift(self, x, rgb_shift=None, prob=0.5):
-        if np.random.random() < prob:
-            if rgb_shift is None:
-                rgb_shift = [10, 10, 10]
-    
-            r_shift = np.random.randint(-rgb_shift[0], rgb_shift[0])
-            g_shift = np.random.randint(-rgb_shift[1], rgb_shift[1])
-            b_shift = np.random.randint(-rgb_shift[2], rgb_shift[2])
-    
-            color_shifted_x = x + np.array([r_shift, g_shift, b_shift])
-    
-            x = np.maximum(np.minimum(color_shifted_x, 255), 0).astype('uint8')
-    
-        return x
+        return perform_color_shift(x, rgb_shift, prob)
 
 
     def perform_center_crop(self, x, min_size=None):
@@ -154,32 +135,17 @@ class CustomImageDataGenerator(ImageDataGenerator):
         return self.crop(x, start_r, start_c, min_size)
 
     def perform_gaussian_blur_range(self, x, blur_range):
-        pil_img = image.array_to_img(x)
-
-        radius = blur_range * np.random.rand()
-        blurred_img = pil_img.filter(ImageFilter.GaussianBlur(radius=radius))
-
-        return np.array(blurred_img)
+        return perform_gaussian_blur_range(x, blur_range)
 
 
     def perform_contrast_stretching(self, x, prob=0.5):
-        if np.random.random() < prob:
-            p2, p98 = np.percentile(x, (2, 98))
-            x = exposure.rescale_intensity(x, in_range=(p2, p98))
-
-        return x
+        return perform_contrast_stretching(x, prob)
 
     def perform_histogram_equalization(self, x, prob=0.5):
-        if np.random.random() < prob:
-            x = exposure.equalize_hist(x)
-
-        return x
+        return perform_histogram_equalization(x, prob)
 
     def perform_adaptive_equalization(self, x, prob=0.5):
-        if np.random.random() < prob:
-            x = exposure.equalize_adapthist(x, clip_limit=0.03)
-
-        return x
+        return perform_adaptive_equalization(x, prob)
 
     def crop(self, x, r, c, size):
         return x[r:r+size, c:c+size]
@@ -209,24 +175,7 @@ class CustomImageDataGenerator(ImageDataGenerator):
         return x
 
     def perform_cut_out(self, im, n_holes=0, length=0, prob=0.5):
-        ''' randomly cut out some squares '''
-        if np.random.random() < prob:
-            h, w, _ = im.shape
-            mask = np.ones((h, w), np.int32)
-            for n in range(n_holes):
-                y = np.random.randint(h)
-                x = np.random.randint(w)
-
-                y1 = int(np.clip(y - length / 2, 0, h))
-                y2 = int(np.clip(y + length / 2, 0, h))
-                x1 = int(np.clip(x - length / 2, 0, w))
-                x2 = int(np.clip(x + length / 2, 0, w))
-                mask[y1: y2, x1: x2] = 0.
-    
-            mask = mask[:,:,None]
-            im = (im * mask).astype('uint8')
-
-        return im
+        return perform_cut_out(im, n_holes, length, prob)
 
 
     def flow_from_directory_with_1x1_conv_target(self, directory,
@@ -252,3 +201,74 @@ class CustomImageDataGenerator(ImageDataGenerator):
             follow_links=follow_links,
             subset=subset,
             interpolation=interpolation)
+
+def perform_rot90(x):
+    return np.rot90(x, k=np.random.randint(4), axes=[0, 1])
+
+def perform_rot90_with_tracking(x):
+    k = np.random.randint(4)
+    return np.rot90(x, k, axes=[0, 1]), k
+
+
+def perform_gaussian_blur_range(x, blur_range):
+    pil_img = image.array_to_img(x)
+
+    radius = blur_range * np.random.rand()
+    blurred_img = pil_img.filter(ImageFilter.GaussianBlur(radius=radius))
+
+    return np.array(blurred_img)
+
+def perform_color_shift(x, rgb_shift=None, prob=0.5):
+    if np.random.random() < prob:
+        if rgb_shift is None:
+            rgb_shift = [10, 10, 10]
+    
+        r_shift = np.random.randint(-rgb_shift[0], rgb_shift[0])
+        g_shift = np.random.randint(-rgb_shift[1], rgb_shift[1])
+        b_shift = np.random.randint(-rgb_shift[2], rgb_shift[2])
+    
+        color_shifted_x = x + np.array([r_shift, g_shift, b_shift])
+    
+        x = np.maximum(np.minimum(color_shifted_x, 255), 0).astype('uint8')
+    
+    return x
+
+def perform_contrast_stretching(x, prob=0.5):
+    if np.random.random() < prob:
+        p2, p98 = np.percentile(x, (2, 98))
+        x = exposure.rescale_intensity(x, in_range=(p2, p98))
+
+    return x
+
+def perform_histogram_equalization(x, prob=0.5):
+    if np.random.random() < prob:
+        x = exposure.equalize_hist(x)
+
+    return x
+
+def perform_adaptive_equalization(x, prob=0.5):
+    if np.random.random() < prob:
+        x = exposure.equalize_adapthist(x, clip_limit=0.03)
+
+    return x
+
+def perform_cut_out(im, n_holes=0, length=0, prob=0.5):
+    ''' randomly cut out some squares '''
+    if np.random.random() < prob:
+        h, w, _ = im.shape
+        mask = np.ones((h, w), np.int32)
+        for n in range(n_holes):
+            y = np.random.randint(h)
+            x = np.random.randint(w)
+
+            y1 = int(np.clip(y - length / 2, 0, h))
+            y2 = int(np.clip(y + length / 2, 0, h))
+            x1 = int(np.clip(x - length / 2, 0, w))
+            x2 = int(np.clip(x + length / 2, 0, w))
+            mask[y1: y2, x1: x2] = 0.
+    
+        mask = mask[:,:,None]
+        im = (im * mask).astype('uint8')
+
+    return im
+

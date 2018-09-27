@@ -6,12 +6,20 @@ from keras.utils import to_categorical
 from keras.preprocessing.image import ImageDataGenerator, NumpyArrayIterator, DirectoryIterator
 from keras.preprocessing.image import transform_matrix_offset_center, apply_transform, array_to_img
 
+from .CustomImageDataGenerator import perform_rot90_with_tracking, perform_gaussian_blur_range, perform_color_shift, perform_contrast_stretching, perform_histogram_equalization, perform_adaptive_equalization, perform_cut_out
+
+
 class NumpyArrayIteratorObjectDetection(NumpyArrayIterator):
     def __init__(self, *args, **kwargs):
         NumpyArrayIterator.__init__(self, *args, **kwargs)
 
     def _get_batches_of_transformed_samples(self, index_array):
-        #print("index_array: {}".format(index_array))
+        def swap(a, i, j):
+	    # swap the values of a[i] and a[j]
+            tmp = a[i]                  
+            a[i] = a[j]
+            a[j] = tmp
+
         batch_x = np.zeros(tuple([len(index_array)] + list(self.x.shape)[1:]),
                            dtype=K.floatx())
 
@@ -28,6 +36,28 @@ class NumpyArrayIteratorObjectDetection(NumpyArrayIterator):
 	    batch_y[i] = np.copy(y)
 	    if y[0] > 0.:
 
+                # 4-rotation (np.rot90)
+	        rot = transform_params['rot']
+	        if rot == 1:
+	            batch_y[i][1] = 1. - batch_y[i][1]     # left/right flip
+		  
+                    #tmp = batch_y[i][1]                    # transpose
+                    #batch_y[i][1] = batch_y[i][2]
+                    #batch_y[i][2] = tmp
+		    swap(batch_y[i], 1, 2)
+
+                elif rot == 2:
+                    batch_y[i][1] = 1. - batch_y[i][1]     # left/right flip
+		    batch_y[i][2] = 1. - batch_y[i][2]     # up/down flip
+
+	        elif rot == 3: 
+                    batch_y[i][2] = 1. - batch_y[i][2]     # up-down flip
+
+                    #tmp = batch_y[i][1]                    # transpose
+                    #batch_y[i][1] = batch_y[i][2]
+                    #batch_y[i][2] = tmp
+		    swap(batch_y[i], 1, 2)
+
 	        # translations
 	        batch_y[i][1] -= (transform_params['ty'] / x.shape[1])
 	        batch_y[i][2] -= (transform_params['tx'] / x.shape[0])
@@ -42,7 +72,7 @@ class NumpyArrayIteratorObjectDetection(NumpyArrayIterator):
 		if batch_y[i][1] < 0.0 or batch_y[i][1] > 1.0 or batch_y[i][2] < 0.0 or batch_y[i][2] > 1.0:
                     batch_y[i] = np.zeros(tuple([1] + list(self.y.shape)[1:]), dtype=K.floatx())
 
-
+            
         if self.save_to_dir:
             for i, j in enumerate(index_array):
                 img = array_to_img(batch_x[i], self.data_format, scale=True)
@@ -56,6 +86,8 @@ class NumpyArrayIteratorObjectDetection(NumpyArrayIterator):
         #batch_y = self.y[index_array]
 
         return batch_x, batch_y
+
+    
 
 class DirectoryIteratorObjectDetection(DirectoryIterator):
     def __init__(self, *args, **kwargs):
@@ -97,6 +129,7 @@ class DirectoryIteratorObjectDetection(DirectoryIterator):
                 batch_y[i, label] = 1.
 	elif self.class_mode == 'categorical_with_bounding_box':
 	    # to be implemented 
+	    assert false, "Not implemented."
             batch_y = np.zeros((len(batch_x), self.num_classes), dtype=K.floatx())
             for i, label in enumerate(self.classes[index_array]):
                 batch_y[i, label] = 1.
@@ -107,8 +140,18 @@ class DirectoryIteratorObjectDetection(DirectoryIterator):
 
 class ImageDataGeneratorObjectDetection(ImageDataGenerator):
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, rot90=False, gaussian_blur_range=None, color_shift=None, contrast_stretching=False, histogram_equalization=False, adaptive_equalization=False, cut_out=None, *args, **kwargs):
+
+        self.rot90 = rot90
+        self.gaussian_blur_range = gaussian_blur_range
+        self.color_shift = color_shift
+        self.contrast_stretching = contrast_stretching
+        self.histogram_equalization = histogram_equalization
+        self.adaptive_equalization = adaptive_equalization
+        self.cut_out = cut_out
+
         ImageDataGenerator.__init__(self, *args, **kwargs)
+
 
     def random_transform(self, x, seed=None):
         """Randomly augment a single image tensor.
@@ -120,6 +163,19 @@ class ImageDataGeneratorObjectDetection(ImageDataGenerator):
         # Returns
             A randomly transformed version of the input (same shape).
         """
+
+        need_uint8_temporarily = False
+	if self.contrast_stretching or self.histogram_equalization or self.adaptive_equalization or self.color_shift or self.cut_out or self.gaussian_blur_range:
+            need_uint8_temporarily = True
+
+	if need_uint8_temporarily:
+	    x = x.astype('uint8')    
+
+	x, rot = self.perform_custom_transform(x)   # rot=0, 1, 2, 3 for 4 orientations. 0 is 'do nothing'
+
+	if need_uint8_temporarily:    # convert back to float32 for the rest of random transforms
+            x = x.astype('float32')
+
         # x is a single image, so it doesn't have image number at index 0
         img_row_axis = self.row_axis - 1
         img_col_axis = self.col_axis - 1
@@ -226,13 +282,41 @@ class ImageDataGeneratorObjectDetection(ImageDataGenerator):
         if self.brightness_range is not None:
             x = random_brightness(x, self.brightness_range)
 
-	transform_parameters = {'theta': theta,
+	transform_parameters = {'rot': rot,
+	                        'theta': theta,
 	                        'tx': tx,
 				'ty': ty,
 				'zx': zx,
 				'zy': zy}
 
         return x, transform_parameters
+
+    def perform_custom_transform(self, x):
+        
+	if self.rot90:
+	    x, k = perform_rot90_with_tracking(x)
+	else:
+	    k = 0
+
+	if self.gaussian_blur_range:
+            x = perform_gaussian_blur_range(x, self.gaussian_blur_range)
+
+        if self.color_shift:
+            x = perform_color_shift(x, rgb_shift=self.color_shift, prob=1.0)
+
+        if self.contrast_stretching:
+            x = perform_contrast_stretching(x, prob=1.0)
+
+        if self.histogram_equalization:
+            x = perform_histogram_equalization(x)
+
+        if self.adaptive_equalization:
+            x = perform_adaptive_equalization(x)
+
+        if self.cut_out:
+            x = perform_cut_out(x, n_holes=self.cut_out[0], length=self.cut_out[1])
+
+	return x, k
 
     def fit(self, x,
             augment=False,
