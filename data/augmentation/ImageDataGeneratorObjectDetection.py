@@ -32,44 +32,36 @@ class NumpyArrayIteratorObjectDetection(NumpyArrayIterator):
             batch_x[i] = x
 
 	    #print("transform_params: {}".format(transform_params))
-	    y = self.y[j]
-	    batch_y[i] = np.copy(y)
-	    if y[0] > 0.:
+            y = self.y[j]
+            batch_y[i] = np.copy(y)
+            if y[0] > 0.:
 
                 # 4-rotation (np.rot90)
-	        rot = transform_params['rot']
-	        if rot == 1:
-	            batch_y[i][1] = 1. - batch_y[i][1]     # left/right flip
-		  
-                    #tmp = batch_y[i][1]                    # transpose
-                    #batch_y[i][1] = batch_y[i][2]
-                    #batch_y[i][2] = tmp
-		    swap(batch_y[i], 1, 2)
+                rot = transform_params['rot']
+                if rot == 1:
+                    batch_y[i][1] = 1. - batch_y[i][1]     # left/right flip
+                    swap(batch_y[i], 1, 2)
 
                 elif rot == 2:
                     batch_y[i][1] = 1. - batch_y[i][1]     # left/right flip
-		    batch_y[i][2] = 1. - batch_y[i][2]     # up/down flip
+                    batch_y[i][2] = 1. - batch_y[i][2]     # up/down flip
 
-	        elif rot == 3: 
+                elif rot == 3: 
                     batch_y[i][2] = 1. - batch_y[i][2]     # up-down flip
-
-                    #tmp = batch_y[i][1]                    # transpose
-                    #batch_y[i][1] = batch_y[i][2]
-                    #batch_y[i][2] = tmp
-		    swap(batch_y[i], 1, 2)
+                    swap(batch_y[i], 1, 2)
 
 	        # translations
-	        batch_y[i][1] -= (transform_params['ty'] / x.shape[1])
-	        batch_y[i][2] -= (transform_params['tx'] / x.shape[0])
+                batch_y[i][1] -= (transform_params['ty'] / x.shape[1])
+                batch_y[i][2] -= (transform_params['tx'] / x.shape[0])
 	        
 		# scale/zoom
-		batch_y[i][1] = ((batch_y[i][1] - 0.5) / transform_params['zy']) + 0.5
-		batch_y[i][2] = ((batch_y[i][2] - 0.5) / transform_params['zx']) + 0.5  
+                batch_y[i][1] = ((batch_y[i][1] - 0.5) / transform_params['zy']) + 0.5
+                batch_y[i][2] = ((batch_y[i][2] - 0.5) / transform_params['zx']) + 0.5  
 
-		batch_y[i][3] /= transform_params['zx']
+                batch_y[i][3] /= transform_params['zx']
 
 		# check if the center c_x, c_y has fallen out of bound, then zeros all the y.
-		if batch_y[i][1] < 0.0 or batch_y[i][1] > 1.0 or batch_y[i][2] < 0.0 or batch_y[i][2] > 1.0:
+                if batch_y[i][1] < 0.0 or batch_y[i][1] > 1.0 or batch_y[i][2] < 0.0 or batch_y[i][2] > 1.0:
                     batch_y[i] = np.zeros(tuple([1] + list(self.y.shape)[1:]), dtype=K.floatx())
 
             
@@ -127,9 +119,9 @@ class DirectoryIteratorObjectDetection(DirectoryIterator):
             batch_y = np.zeros((len(batch_x), self.num_classes), dtype=K.floatx())
             for i, label in enumerate(self.classes[index_array]):
                 batch_y[i, label] = 1.
-	elif self.class_mode == 'categorical_with_bounding_box':
+        elif self.class_mode == 'categorical_with_bounding_box':
 	    # to be implemented 
-	    assert false, "Not implemented."
+            assert false, "Not implemented."
             batch_y = np.zeros((len(batch_x), self.num_classes), dtype=K.floatx())
             for i, label in enumerate(self.classes[index_array]):
                 batch_y[i, label] = 1.
@@ -165,15 +157,15 @@ class ImageDataGeneratorObjectDetection(ImageDataGenerator):
         """
 
         need_uint8_temporarily = False
-	if self.contrast_stretching or self.histogram_equalization or self.adaptive_equalization or self.color_shift or self.cut_out or self.gaussian_blur_range:
+        if self.contrast_stretching or self.histogram_equalization or self.adaptive_equalization or self.color_shift or self.cut_out or self.gaussian_blur_range:
             need_uint8_temporarily = True
 
-	if need_uint8_temporarily:
-	    x = x.astype('uint8')    
+        if need_uint8_temporarily:
+            x = x.astype('uint8')    
 
-	x, rot = self.perform_custom_transform(x)   # rot=0, 1, 2, 3 for 4 orientations. 0 is 'do nothing'
+        x, rot = self.perform_custom_transform(x)   # rot=0, 1, 2, 3 for 4 orientations. 0 is 'do nothing'
 
-	if need_uint8_temporarily:    # convert back to float32 for the rest of random transforms
+        if need_uint8_temporarily:    # convert back to float32 for the rest of random transforms
             x = x.astype('float32')
 
         # x is a single image, so it doesn't have image number at index 0
@@ -215,10 +207,6 @@ class ImageDataGeneratorObjectDetection(ImageDataGenerator):
         else:
             ty = 0
 
-	# hack to debug
-	#tx = -0.45 * x.shape[img_row_axis]
-	#ty = -0.25 * x.shape[img_col_axis]
-
         if self.shear_range:
             shear = np.deg2rad(np.random.uniform(-self.shear_range, self.shear_range))
         else:
@@ -228,12 +216,8 @@ class ImageDataGeneratorObjectDetection(ImageDataGenerator):
             zx, zy = 1, 1
         else: # for object detection, we may not want to distort the object and bounding box like this.
             # zx, zy = np.random.uniform(self.zoom_range[0], self.zoom_range[1], 2)
-	    zx = np.random.uniform(self.zoom_range[0], self.zoom_range[1])
+            zx = np.random.uniform(self.zoom_range[0], self.zoom_range[1])
             zy = zx
-
-	    # hack to debug
-	    #zx = 0.8
-	    #zy = 0.8
 
         transform_matrix = None
         if theta != 0:
@@ -282,7 +266,7 @@ class ImageDataGeneratorObjectDetection(ImageDataGenerator):
         if self.brightness_range is not None:
             x = random_brightness(x, self.brightness_range)
 
-	transform_parameters = {'rot': rot,
+        transform_parameters = {'rot': rot,
 	                        'theta': theta,
 	                        'tx': tx,
 				'ty': ty,
@@ -293,12 +277,12 @@ class ImageDataGeneratorObjectDetection(ImageDataGenerator):
 
     def perform_custom_transform(self, x):
         
-	if self.rot90:
-	    x, k = perform_rot90_with_tracking(x)
-	else:
-	    k = 0
+        if self.rot90:
+            x, k = perform_rot90_with_tracking(x)
+        else:
+            k = 0
 
-	if self.gaussian_blur_range:
+        if self.gaussian_blur_range:
             x = perform_gaussian_blur_range(x, self.gaussian_blur_range)
 
         if self.color_shift:
@@ -316,7 +300,7 @@ class ImageDataGeneratorObjectDetection(ImageDataGenerator):
         if self.cut_out:
             x = perform_cut_out(x, n_holes=self.cut_out[0], length=self.cut_out[1])
 
-	return x, k
+        return x, k
 
     def fit(self, x,
             augment=False,
