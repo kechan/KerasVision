@@ -43,7 +43,7 @@ def build_model(input_shape=None, conv_base_source=None, params=None):
     if conv_base_source is None:
         conv_base = ResNet50(weights='imagenet', include_top=False) 
     else:
-        src_model = load_model(os.path.join(top_model_dir, 'keras_resnet50_far_less_aug_conv1_d0.5_weights_acc_0.9204.h5'))
+        src_model = load_model(conv_base_source)
         conv_base = src_model.get_layer('resnet50')
 
     if input_shape is None:
