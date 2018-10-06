@@ -55,6 +55,8 @@ def build_model(input_shape=None, conv_base_source=None, params=None):
      
     if params is not None and params.dropout is not None:
         dropout = params.dropout
+    else:
+        dropout = 0.0
  
     p_o = Dropout(dropout)(X)
     p_o = Conv2D(1, (1, 1), activation='sigmoid', name='object_prediction')(p_o)   #(X)
