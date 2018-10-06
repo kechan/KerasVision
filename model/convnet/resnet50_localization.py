@@ -23,7 +23,7 @@ def exp_activation(X):
 
 #get_custom_objects().update({'exp_activation': Exp(exp_activation)})
 
-def build_model(input_shape = (64, 64, 3), conv_base_source=None, params=None):
+def build_model(input_shape=None, conv_base_source=None, params=None):
     ''' Build a ResNet50 based convnet that output classification and bounding box info 
 
     Parameters
@@ -46,7 +46,11 @@ def build_model(input_shape = (64, 64, 3), conv_base_source=None, params=None):
         src_model = load_model(os.path.join(top_model_dir, 'keras_resnet50_far_less_aug_conv1_d0.5_weights_acc_0.9204.h5'))
         conv_base = src_model.get_layer('resnet50')
 
-    X_input = Input((None, None, 3))
+    if input_shape is None:
+        X_input = Input((None, None, 3))
+    else:
+        X_input = Input(input_shape)
+
     X = conv_base(X_input)
      
     if params is not None and params.dropout is not None:
