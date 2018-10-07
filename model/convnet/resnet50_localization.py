@@ -23,7 +23,7 @@ def exp_activation(X):
 
 #get_custom_objects().update({'exp_activation': Exp(exp_activation)})
 
-def build_model(input_shape=None, conv_base_source=None, params=None):
+def resnet50_localization(input_shape=None, conv_base_source=None, params=None):
     ''' Build a ResNet50 based convnet that output classification and bounding box info 
 
     Parameters
