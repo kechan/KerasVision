@@ -1,4 +1,6 @@
 from keras import backend as K
+from keras.utils.generic_utils import get_custom_objects
+
 
 def obj_localization_loss(y_true, y_pred):
     class_scale = 1.
