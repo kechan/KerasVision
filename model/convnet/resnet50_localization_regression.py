@@ -1,4 +1,7 @@
 import os
+
+import tensorflow as tf
+import keras
 from keras.models import Sequential, Model
 from keras.models import load_model
 from keras.layers import Conv2D, Dropout, Concatenate, Reshape
@@ -49,3 +52,32 @@ def resnet50_localization_regression(input_shape=None, conv_base_source=None, pa
     out = Reshape((-1,))(out)
 
     return Model(inputs=X_input, outputs=out)
+
+
+
+class EvaluateOutputs(keras.layers.Layer):
+
+    def __init__(self, **kwargs):
+        super(EvaluateOutputs, self).__init__(**kwargs)
+        
+    #def build(self, input_shape):
+    #    super(EvaluateOutputs, self).build(input_shape)
+        
+    def call(self, inputs):
+        p_o = K.sigmoid(inputs[:, 0:1])
+        p_c = K.softmax(inputs[:, 4:])
+        
+        b_xy = K.sigmoid(inputs[:, 1:3])
+        b_r = K.exp(inputs[:, 3:4])
+        
+        return K.concatenate([p_o, b_xy, b_r, p_c], axis=-1)
+    
+    def compute_output_shape(self, input_shape):
+        #print(input_shape)
+        shape = tf.TensorShape(input_shape).as_list()
+        return tf.TensorShape(shape)
+        
+    @classmethod
+    def from_confg(cls, config):
+        return cls(**config)
+
