@@ -63,4 +63,4 @@ def L_acc(y_true, y_pred):
     
     return joint_accuracy  
   
-get_custom_objects().update({'L_acc': L_acc})
+#get_custom_objects().update({'L_acc': L_acc})

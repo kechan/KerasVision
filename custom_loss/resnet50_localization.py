@@ -42,5 +42,5 @@ def obj_localization_loss(y_true, y_pred):
     
     return total_loss
 
-get_custom_objects().update({'obj_localization_loss': obj_localization_loss})
+#get_custom_objects().update({'obj_localization_loss': obj_localization_loss})
 

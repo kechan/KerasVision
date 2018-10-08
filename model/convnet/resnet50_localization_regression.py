@@ -81,3 +81,6 @@ class EvaluateOutputs(keras.layers.Layer):
     def from_confg(cls, config):
         return cls(**config)
 
+def resnet50_localization_regression_eval(model):
+    out = EvaluateOutputs()(model.output)
+    return Model(inputs = model.input, outputs = out) 
