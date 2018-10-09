@@ -24,7 +24,7 @@ def exp_activation(X):
   return K.exp(X)
 
 
-def resnet50_localization(input_shape=None, conv_base_source=None, params=None):
+def resnet50_localization(input_shape=None, conv_base_source=None, params=None, ModelType=None):
     ''' Build a ResNet50 based convnet that output classification and bounding box info 
 
     Parameters
@@ -79,10 +79,12 @@ def resnet50_localization(input_shape=None, conv_base_source=None, params=None):
     
     out = Reshape((-1,))(out)
 
-    return Model(inputs=X_input, outputs=out)
+    if ModelType is None:
+        return Model(inputs=X_input, outputs=out)
+    else:
+        return ModelType(inputs=X_input, outputs=out)
 
-
-def resnet50_localization_regression(input_shape=None, conv_base_source=None, params=None):
+def resnet50_localization_regression(input_shape=None, conv_base_source=None, params=None, ModelType=None):
     ''' Build a ResNet50 based convnet that output classification and bounding box related info 
         The custom layer EvaluateOutputs is needed as final layer to get the observed prediction.
 
@@ -120,7 +122,10 @@ def resnet50_localization_regression(input_shape=None, conv_base_source=None, pa
     out = Conv2D(10, (1, 1), name='t_output')(X)
     out = Reshape((-1,))(out)
 
-    return Model(inputs=X_input, outputs=out)
+    if ModelType is None:
+        return Model(inputs=X_input, outputs=out)
+    else:
+        return ModelType(inputs=X_input, outputs=out)
 
 
 class EvaluateOutputs(keras.layers.Layer):
@@ -149,6 +154,9 @@ class EvaluateOutputs(keras.layers.Layer):
     def from_confg(cls, config):
         return cls(**config)
 
-def resnet50_localization_regression_eval(model):
+def resnet50_localization_regression_eval(model, ModelType=None):
     out = EvaluateOutputs()(model.output)
-    return Model(inputs = model.input, outputs = out) 
+    if ModelType is None:
+        return Model(inputs = model.input, outputs = out) 
+    else:
+        return ModelType(inputs = model.input, outputs = out)
