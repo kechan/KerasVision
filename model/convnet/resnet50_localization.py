@@ -1,4 +1,5 @@
 import os, PIL
+import numpy as np
 import tensorflow as tf
 import keras
 from keras.models import Sequential, Model
@@ -214,6 +215,9 @@ class ZoomAndFocusModel(keras.Model):
  
         return y_pred
 
+    # For error analysis
+    #@classmethod
+    #def 
 
 
 
