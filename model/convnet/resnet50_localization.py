@@ -191,9 +191,9 @@ class ZoomAndFocusModel(keras.Model):
         crop_size = np.stack([crop_coords[..., 2] - crop_coords[..., 0], crop_coords[..., 3] - crop_coords[..., 1]], axis=-1)
 
 	# get the absolute coordinate in order to crop the actual image
-	abs_crop_coords = np.round((crop_coords * np.concatenate([orig_img_size, orig_img_size], axis=-1))).astype(np.int)
-        
-	return y_pred
+        abs_crop_coords = np.round((crop_coords * np.concatenate([orig_img_size, orig_img_size], axis=-1))).astype(np.int)
+ 
+        return y_pred
 
 
 
