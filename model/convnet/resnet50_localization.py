@@ -154,9 +154,48 @@ class EvaluateOutputs(keras.layers.Layer):
     def from_confg(cls, config):
         return cls(**config)
 
-def resnet50_localization_regression_eval(model, ModelType=None):
+def install_head_resnet50_localization_regression(model, ModelType=None):
     out = EvaluateOutputs()(model.output)
     if ModelType is None:
         return Model(inputs = model.input, outputs = out) 
     else:
         return ModelType(inputs = model.input, outputs = out)
+
+
+class ZoomAndFocusModel(keras.Model):
+    def __init__(self, padding_ratio=1.0, **kwargs):
+        super(ZoomAndFocusModel, self).__init__(name='zoom_and_focus_model', **kwargs)
+        self.padding_ratio = padding_ratio
+
+    def predict_with_zoom_and_focus(self, x, **kwargs):
+        y_pred = super(ZoomAndFocusModel, self).predict(x, **kwargs)
+        assert x.shape[0] == 1, "Batch prediction not supported".
+
+        height, width = x.shape[1], x.shape[2]   # this is expected to conform to the shape of model.input
+
+        orig_img_size = np.array([height, width]).reshape((1, 2))
+
+        c_x = y_pred[..., 1:2]
+        c_y = y_pred[..., 2:3]
+        c_r = y_pred[..., 3:4]
+
+        box = np.concatenate([c_y - c_r, c_x - c_r, c_y + c_r, c_x + c_r], axis=-1)   # top, left, bottom, right 
+        box_size = np.concatenate([2. * c_r, 2. * c_r], axis=-1)	
+
+        padding_size = box_size * self.padding_ratio
+        crop_coords = np.concatenate([
+                                      np.maximum(0, box[..., :2] - padding_size), 
+                                      np.minimum(1.0, box[...,2:] + padding_size)
+                                     ], axis=-1)
+
+        crop_size = np.stack([crop_coords[..., 2] - crop_coords[..., 0], crop_coords[..., 3] - crop_coords[..., 1]], axis=-1)
+
+	# get the absolute coordinate in order to crop the actual image
+	abs_crop_coords = np.round((crop_coords * np.concatenate([orig_img_size, orig_img_size], axis=-1))).astype(np.int)
+        
+	return y_pred
+
+
+
+
+
