@@ -169,7 +169,7 @@ class ZoomAndFocusModel(keras.Model):
 
     def predict_with_zoom_and_focus(self, x, **kwargs):
         y_pred = super(ZoomAndFocusModel, self).predict(x, **kwargs)
-        assert x.shape[0] == 1, "Batch prediction not supported".
+        assert x.shape[0] == 1, "Batch prediction not supported."
 
         height, width = x.shape[1], x.shape[2]   # this is expected to conform to the shape of model.input
 
