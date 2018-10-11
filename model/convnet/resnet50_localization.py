@@ -1,4 +1,4 @@
-import os
+import os, PIL
 import tensorflow as tf
 import keras
 from keras.models import Sequential, Model
@@ -192,6 +192,25 @@ class ZoomAndFocusModel(keras.Model):
 
 	# get the absolute coordinate in order to crop the actual image
         abs_crop_coords = np.round((crop_coords * np.concatenate([orig_img_size, orig_img_size], axis=-1))).astype(np.int)
+
+	# crop the box out from the original image
+        x_ = x[0]
+        cropped_x = x_[abs_crop_coords[0,0]:abs_crop_coords[0,2], abs_crop_coords[0,1]:abs_crop_coords[0,3], :]
+        img = PIL.Image.fromarray(cropped_x)
+        resize_img = img.resize((height, width), Image.BICUBIC)   # resize back to what the model input expects
+        cropped_resized_x = np.array(resize_img)
+
+	# make a prediction on the cropped and resized image
+        cropped_resize_y_pred = self.predict(cropped_resized_x[None]/255.)
+
+        # transform the prediction back to coordinate system of the original image
+        #print(cropped_resize_yhat[0])
+
+        #cropped_resize_yhat[..., 1:3] = cropped_resize_yhat[..., 1:3] * crop_size + np.array([c_x, c_y]).reshape((1, 2)) - np.fliplr(crop_size)/2.
+        #cropped_resize_yhat[..., 3:4] = cropped_resize_yhat[..., 3:4] * crop_size[..., 0:1] 
+	
+	# Modify the class prediction based on that of cropped image
+        y_pred[..., 4:] = cropped_resize_y_pred[..., 4:]
  
         return y_pred
 
