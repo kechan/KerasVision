@@ -215,9 +215,60 @@ class ZoomAndFocusModel(keras.Model):
  
         return y_pred
 
-    # For error analysis
-    #@classmethod
-    #def 
+# For error analysis
+def L_acc_by_parts(y_true, y_pred, iou_score_threshold=0.6):
+    '''
+    Return numpy array of {0., 1.} intermediate indicator values for calculating error/accuracy attributable to different aspect of the prediction.
+  
+    Parameters:
+    y_true:   ground truth in shape of [batch, ?]
+    y_pred:   prediction in shape of [batch, ?]
+    '''
+  
+    # Objectness confidence, (background vs. an object)
+  
+    y_true_conf = y_true[..., 0]
+    y_pred_conf = np.round(y_pred[..., 0])
+  
+    # Class (must be one-hot encoded)
+    y_true_classes = y_true[..., 4:]
+    y_pred_classes = y_pred[..., 4:]
+
+    classes_accuracy = np.equal(np.argmax(y_true_classes, axis=-1), np.argmax(y_pred_classes, axis=-1)).astype(np.float32)
+  
+    # IOU driven accuracy
+    true_xy = y_true[..., 1:3]
+    pred_xy = y_pred[..., 1:3]
+  
+    true_r = y_true[..., 3:4]
+    pred_r = y_pred[..., 3:4]
+  
+    true_mins = true_xy - true_r    # top, left, bottom, right coordinates
+    true_maxes = true_xy + true_r
+    
+    pred_mins = pred_xy - pred_r
+    pred_maxes = pred_xy + pred_r
+  
+    intersect_mins = np.maximum(pred_mins, true_mins)
+    intersect_maxes = np.minimum(pred_maxes, true_maxes)
+    intersect_wh = np.maximum(intersect_maxes - intersect_mins, 0.)
+    intersect_areas = intersect_wh[..., 0] * intersect_wh[..., 1]
+
+    pred_areas = 4. * pred_r[..., 0] * pred_r[..., 0]   # a square
+    true_areas = 4. * true_r[..., 0] * true_r[..., 0]
+
+    union_areas = pred_areas + true_areas - intersect_areas
+    iou_scores = intersect_areas / union_areas
+    
+    iou_accuracy = (iou_scores > iou_score_threshold).astype(np.float32)
+
+    # Total joint accuracy
+    joint_accuracy = (y_true_conf * y_pred_conf * classes_accuracy * iou_accuracy) + \
+                         ((1.0 - y_true_conf) * (1.0 - y_pred_conf)) 
+  
+    # Accuracy attributable to IOU
+  
+    return joint_accuracy, iou_accuracy, iou_scores, classes_accuracy, y_true_conf, y_pred_conf 
 
 
 
