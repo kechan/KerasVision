@@ -204,15 +204,22 @@ class ZoomAndFocusModel(keras.Model):
 	# make a prediction on the cropped and resized image
         cropped_resize_y_pred = self.predict(cropped_resized_x[None]/255.)
 
-        # transform the prediction back to coordinate system of the original image
-        #print(cropped_resize_yhat[0])
-
-        #cropped_resize_yhat[..., 1:3] = cropped_resize_yhat[..., 1:3] * crop_size + np.array([c_x, c_y]).reshape((1, 2)) - np.fliplr(crop_size)/2.
-        #cropped_resize_yhat[..., 3:4] = cropped_resize_yhat[..., 3:4] * crop_size[..., 0:1] 
-	
+        	
 	# Modify the objectness and class prediction based on that of cropped image
         y_pred[..., 4:] = cropped_resize_y_pred[..., 4:]
-	y_pred[..., 0:1] = cropped_resize_y_pred[..., 0:1]
+        y_pred[..., 0:1] = cropped_resize_y_pred[..., 0:1]
+
+        # TODO: Figure how to relax this requirement
+        # crop_size needs to be a square, if it isnt, we don't update bounding box coordinate
+        if np.abs(np.squeeze(crop_size[..., 0] - crop_size[..., 1])) < K.epsilon():
+	    # transform the prediction back to coordinate system of the original image
+            # print(cropped_resize_yhat[0])
+	
+            cropped_resize_yhat[..., 1:3] = cropped_resize_yhat[..., 1:3] * crop_size + np.array([c_x, c_y]).reshape((1, 2)) - np.fliplr(crop_size)/2.
+            cropped_resize_yhat[..., 3:4] = cropped_resize_yhat[..., 3:4] * crop_size[..., 0:1] 
+
+            y_pred[..., 1:3] = cropped_resize_yhat[..., 1:3]
+            y_pred[..., 3:4] = cropped_resize_yhat[..., 3:4]
  
         return y_pred
 
