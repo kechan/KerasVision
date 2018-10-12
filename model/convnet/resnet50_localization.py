@@ -210,15 +210,16 @@ class ZoomAndFocusModel(keras.Model):
         #cropped_resize_yhat[..., 1:3] = cropped_resize_yhat[..., 1:3] * crop_size + np.array([c_x, c_y]).reshape((1, 2)) - np.fliplr(crop_size)/2.
         #cropped_resize_yhat[..., 3:4] = cropped_resize_yhat[..., 3:4] * crop_size[..., 0:1] 
 	
-	# Modify the class prediction based on that of cropped image
+	# Modify the objectness and class prediction based on that of cropped image
         y_pred[..., 4:] = cropped_resize_y_pred[..., 4:]
+	y_pred[..., 0:1] = cropped_resize_y_pred[..., 0:1]
  
         return y_pred
 
 # For error analysis
 def L_acc_by_parts(y_true, y_pred, iou_score_threshold=0.6):
     '''
-    Return numpy array of {0., 1.} intermediate indicator values for calculating error/accuracy attributable to different aspect of the prediction.
+    Return numpy array of {0., 1.} intermediate indicators for further calculating error/accuracy attributable to various aspect of the predictions.
   
     Parameters:
     y_true:   ground truth in shape of [batch, ?]
