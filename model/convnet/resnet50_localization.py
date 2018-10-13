@@ -249,6 +249,10 @@ class ZoomAndFocusModel(keras.Model):
 
         y_pred = self.predict(x[None]/255., **kwargs)
 
+	# check if this is background, if it is, skip zoom/focus 
+        if np.round(y_pred[..., 0]) == 0:
+            return y_pred
+
         c_x = y_pred[..., 1:2]
         c_y = y_pred[..., 2:3]
         c_r = y_pred[..., 3:4]
