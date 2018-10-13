@@ -258,7 +258,7 @@ class ZoomAndFocusModel(keras.Model):
         resized_img = cropped_img.resize((224, 224), PIL.Image.BICUBIC) # resize back to what the model input expects
 
         cropped_resized_x = np.array(resized_img)
-	cropped_resized_x = cropped_resized_x[:, :, :3]
+        cropped_resized_x = cropped_resized_x[:, :, :3]
 
         # make a prediction on the cropped and resized image
         cropped_resize_y_pred = self.predict(cropped_resized_x[None]/255.)
