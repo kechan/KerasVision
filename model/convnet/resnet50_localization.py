@@ -229,7 +229,7 @@ class ZoomAndFocusModel(keras.Model):
 
         x = np.array(img.resize((224, 224), PIL.Image.BICUBIC))              # TODO: 224 shouldnt be hardcoded, need to figure this out
 
-        y_pred = self.predict(x[None]./255.)
+        y_pred = self.predict(x[None]/255., **kwargs)
 
         c_x = y_pred[..., 1:2]
         c_y = y_pred[..., 2:3]
