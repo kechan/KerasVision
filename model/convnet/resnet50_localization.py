@@ -227,16 +227,17 @@ class ZoomAndFocusModel(keras.Model):
     def predict_zoom_and_focus_raw_image(self, filename, **kwargs):
         img = PIL.Image.open(filename)
 
-	# take care of img orientation issue of PIL.Image.open
-        exif = dict(img._getexif().items())
-        inv_ExifTags = dict([(property, idx) for idx, property in ExifTags.TAGS.items()])	
-        orientation = exif[inv_ExifTags['Orientation']]
-        if orientation == 3:
-            img = img.rotate(180)
-        elif orientation == 6:
-            img = img.rotate(270)
-        elif orientation == 8:
-            img = img.rotate(90)
+	# take care of jpeg img orientation issue of PIL.Image.open
+	if hasattr(img, '_getexif'):
+            exif = dict(img._getexif().items())
+            inv_ExifTags = dict([(property, idx) for idx, property in ExifTags.TAGS.items()])	
+            orientation = exif[inv_ExifTags['Orientation']]
+            if orientation == 3:
+                img = img.rotate(180)
+            elif orientation == 6:
+                img = img.rotate(270)
+            elif orientation == 8:
+                img = img.rotate(90)
 
         orig_img_size = np.array([img.height, img.width]).reshape((1, 2))    # note this is not 224x224, but large
 
