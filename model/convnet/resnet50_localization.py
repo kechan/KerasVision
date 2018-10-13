@@ -1,4 +1,6 @@
 import os, PIL
+from PIL import ExifTags
+
 import numpy as np
 import tensorflow as tf
 import keras
@@ -225,6 +227,17 @@ class ZoomAndFocusModel(keras.Model):
     def predict_zoom_and_focus_raw_image(self, filename, **kwargs):
         img = PIL.Image.open(filename)
 
+	# take care of img orientation issue of PIL.Image.open
+        exif = dict(img._getexif().items())
+        inv_ExifTags = dict([(property, idx) for idx, property in ExifTags.TAGS.items()])	
+        orientation = exif[inv_ExifTags['Orientation']]
+        if orientation == 3:
+            img = img.rotate(180)
+        elif orientation == 6:
+            img = img.rotate(270)
+        elif orientation == 8:
+            img = img.rotate(90)
+
         orig_img_size = np.array([img.height, img.width]).reshape((1, 2))    # note this is not 224x224, but large
 
         x = np.array(img.resize((224, 224), PIL.Image.BICUBIC))              # TODO: 224 shouldnt be hardcoded, need to figure this out
@@ -386,7 +399,7 @@ def error_analysis_summary_print(y_true, y_pred, filenames=None, iou_score_thres
         num_err_due_far = len([str(filenames[idx]) for idx in np.nonzero(1. - joint_accuracy)[0] 
                           if "FAR" in str(filenames[idx])])
 
-        print("% due to far object: {:.2f}%\n\n".format(
+        print("% due to far object: {:.2f}%\n".format(
             num_err_due_far/total_num_err*100.
         ))
 
