@@ -277,6 +277,56 @@ def L_acc_by_parts(y_true, y_pred, iou_score_threshold=0.6):
   
     return joint_accuracy, iou_accuracy, iou_scores, classes_accuracy, y_true_conf, y_pred_conf 
 
+def error_analysis_summary_print(y_true, y_pred, iou_score_threshold=0.6):
+    joint_accuracy, iou_accuracy, iou_scores, classes_accuracy, y_true_conf, y_pred_conf = L_acc_by_parts(y_true, y_pred, iou_score_threshold=iou_score_threshold)
+    
+    num_samples = len(joint_accuracy)
 
+    print("{} errors and accuracy is {:.2f}%".format(np.sum(1. - joint_accuracy), np.sum(joint_accuracy)/num_samples*100.))
+    print("")
+
+    total_num_err = np.sum(1. - joint_accuracy)
+
+    print("% of mistake due to IOU: {0:.2f}%".format(
+        np.sum((1. - iou_accuracy) * np.clip(y_pred_conf + y_true_conf, 0, 1)) / total_num_err * 100.   # % of IOU mismatch that matters, everything but background
+    ))
+
+    print("% of mistake due to mis-classification: {0:.2f}%".format(
+        np.sum((1. - classes_accuracy) * np.clip(y_pred_conf + y_true_conf, 0, 1)) / total_num_err * 100.
+    ))
+
+    print("% of mistake due to both: {0:.2f}%".format(
+        np.sum(
+        (1. - iou_accuracy) * 
+        (1. - classes_accuracy) *
+        np.clip(y_pred_conf + y_true_conf, 0, 1)
+        ) / total_num_err * 100.
+    ))
+
+    print("")
+
+    print("Overall error % due to IOU: {:.2f}%".format(
+        np.sum((1. - iou_accuracy) * np.clip(y_pred_conf + y_true_conf, 0, 1)) / num_samples * 100.
+    )) 
+
+    print("Overall error % due to mis-classification: {:.2f}%".format(
+        np.sum((1. - classes_accuracy) * np.clip(y_pred_conf + y_true_conf, 0, 1)) / num_samples * 100.
+    ))
+
+
+    print("Overall error % due to both: {:.2f}%\n".format(  
+        np.sum(
+        (1. - iou_accuracy) * 
+        (1. - classes_accuracy) *
+        np.clip(y_pred_conf + y_true_conf, 0, 1)
+        ) / num_samples * 100.
+    ))
+
+    num_err_due_far = len([str(dev_idx_filenames[idx]) for idx in np.nonzero(1. - joint_accuracy)[0] 
+                       if "FAR" in str(dev_idx_filenames[idx])])
+
+    print("% due to far object: {:.2f}%\n\n".format(
+        num_err_due_far/total_num_err*100.
+    ))
 
 
