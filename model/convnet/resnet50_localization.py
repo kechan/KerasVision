@@ -229,6 +229,7 @@ class ZoomAndFocusModel(keras.Model):
 
 	# take care of jpeg img orientation issue of PIL.Image.open
         print(type(img))
+	'''
 	if type(img) == PIL.JpegImagePlugin.JpegImageFile:
             exif = dict(img._getexif().items())
             inv_ExifTags = dict([(property, idx) for idx, property in ExifTags.TAGS.items()])	
@@ -239,7 +240,7 @@ class ZoomAndFocusModel(keras.Model):
                 img = img.rotate(270)
             elif orientation == 8:
                 img = img.rotate(90)
-
+        '''
         orig_img_size = np.array([img.height, img.width]).reshape((1, 2))    # note this is not 224x224, but large
 
         x = np.array(img.resize((224, 224), PIL.Image.BICUBIC))              # TODO: 224 shouldnt be hardcoded, need to figure this out
