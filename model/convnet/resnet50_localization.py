@@ -381,7 +381,7 @@ def error_analysis_summary_print(y_true, y_pred, filenames=None, iou_score_thres
 
     if filenames is not None:
         num_err_due_far = len([str(filenames[idx]) for idx in np.nonzero(1. - joint_accuracy)[0] 
-                          if "FAR" in str(dev_idx_filenames[idx])])
+                          if "FAR" in str(filenames[idx])])
 
         print("% due to far object: {:.2f}%\n\n".format(
             num_err_due_far/total_num_err*100.
