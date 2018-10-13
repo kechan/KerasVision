@@ -198,7 +198,7 @@ class ZoomAndFocusModel(keras.Model):
 	# crop the box out from the original image
         x_ = x[0]
         cropped_x = x_[abs_crop_coords[0,0]:abs_crop_coords[0,2], abs_crop_coords[0,1]:abs_crop_coords[0,3], :]
-        img = PIL.Image.fromarray((cropped_x*225.).astype(np.uint8))
+        img = PIL.Image.fromarray((cropped_x*255.).astype(np.uint8))
         resize_img = img.resize((height, width), PIL.Image.BICUBIC)   # resize back to what the model input expects
         cropped_resized_x = np.array(resize_img)
 
