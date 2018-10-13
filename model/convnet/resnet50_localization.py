@@ -193,6 +193,7 @@ class ZoomAndFocusModel(keras.Model):
 
 	# get the absolute coordinate in order to crop the actual image
         abs_crop_coords = np.round((crop_coords * np.concatenate([orig_img_size, orig_img_size], axis=-1))).astype(np.int)
+	print("abs_crop_coords: {}".format(abs_crop_coords))
 
 	# crop the box out from the original image
         x_ = x[0]
@@ -203,7 +204,7 @@ class ZoomAndFocusModel(keras.Model):
 
 	# make a prediction on the cropped and resized image
         cropped_resize_y_pred = self.predict(cropped_resized_x[None]/255.)
-
+        print("cropped_resize_y_pred: {}".format(cropped_resize_y_pred))
         	
 	# Modify the objectness and class prediction based on that of cropped image
         y_pred[..., 4:] = cropped_resize_y_pred[..., 4:]
