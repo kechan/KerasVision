@@ -229,7 +229,7 @@ class ZoomAndFocusModel(keras.Model):
 
         x = np.array(img.resize((224, 224), PIL.Image.BICUBIC))              # TODO: 224 shouldnt be hardcoded, need to figure this out
 
-	x = x[:,:,:3]   # ignore the last channel in case there are 4 (224, 224, 4), which is the alpha 
+        x = x[:,:,:3]   # ignore the last channel in case there are 4 (224, 224, 4), which is the alpha 
 
         y_pred = self.predict(x[None]/255., **kwargs)
 
