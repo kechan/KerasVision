@@ -222,6 +222,63 @@ class ZoomAndFocusModel(keras.Model):
  
         return y_pred
 
+    def predict_zoom_and_focus_raw_image(self, filename, **kwargs):
+        img = PIL.Image.open(filename)
+
+        orig_img_size = np.array([img.height, img.width]).reshape((1, 2))    # note this is not 224x224, but large
+
+        x = np.array(img.resize((224, 224), PIL.Image.BICUBIC))              # TODO: 224 shouldnt be hardcoded, need to figure this out
+
+        y_pred = self.predict(x[None]./255.)
+
+        c_x = y_pred[..., 1:2]
+        c_y = y_pred[..., 2:3]
+        c_r = y_pred[..., 3:4]
+
+        box = np.concatenate([c_y - c_r, c_x - c_r, c_y + c_r, c_x + c_r], axis=-1)   # top, left, bottom, right 
+        box_size = np.concatenate([2. * c_r, 2. * c_r], axis=-1)
+
+        padding_size = box_size * self.padding_ratio
+        crop_coords = np.concatenate([
+                                      np.maximum(0, box[..., :2] - padding_size), 
+                                      np.minimum(1.0, box[...,2:] + padding_size)
+                                     ], axis=-1)
+
+        crop_size = np.stack([crop_coords[..., 2] - crop_coords[..., 0], crop_coords[..., 3] - crop_coords[..., 1]], axis=-1)
+
+	# get the absolute coordinate in order to crop the actual image
+        abs_crop_coords = np.round((crop_coords * np.concatenate([orig_img_size, orig_img_size], axis=-1))).astype(np.int)
+        
+        cropped_x = np.array(img)[abs_crop_coords[0,0]:abs_crop_coords[0,2], abs_crop_coords[0,1]:abs_crop_coords[0,3], :]
+
+        cropped_img = PIL.Image.fromarray(cropped_x)
+
+        resized_img = cropped_img.resize((224, 224), PIL.Image.BICUBIC) # resize back to what the model input expects
+
+        cropped_resized_x = np.array(resize_img)
+
+        # make a prediction on the cropped and resized image
+        cropped_resize_y_pred = self.predict(cropped_resized_x[None]/255.)
+
+        # Modify the objectness and class prediction based on that of cropped image
+        y_pred[..., 4:] = cropped_resize_y_pred[..., 4:]
+        y_pred[..., 0:1] = cropped_resize_y_pred[..., 0:1]
+	
+        # TODO: Figure how to relax this requirement
+        # crop_size needs to be a square, if it isnt, we don't update bounding box coordinate
+        if np.abs(np.squeeze(crop_size[..., 0] - crop_size[..., 1])) < K.epsilon():
+	    # transform the prediction back to coordinate system of the original image
+            # print(cropped_resize_yhat[0])
+	
+            cropped_resize_y_pred[..., 1:3] = cropped_resize_y_pred[..., 1:3] * crop_size + np.array([crop_coords[0, 1], crop_coords[0, 0]])
+            cropped_resize_y_pred[..., 3:4] = cropped_resize_y_pred[..., 3:4] * crop_size[..., 0:1] 
+
+            y_pred[..., 1:3] = cropped_resize_y_pred[..., 1:3]
+            y_pred[..., 3:4] = cropped_resize_y_pred[..., 3:4]
+ 
+
+        return y_pred
+
 # For error analysis
 def L_acc_by_parts(y_true, y_pred, iou_score_threshold=0.6):
     '''
