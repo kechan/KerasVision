@@ -228,7 +228,7 @@ class ZoomAndFocusModel(keras.Model):
         img = PIL.Image.open(filename)
 
 	# take care of jpeg img orientation issue of PIL.Image.open
-        print(type(img))
+        print(type(img) == PIL.JpegImagePlugin.JpegImageFile)
         '''
 	if type(img) == PIL.JpegImagePlugin.JpegImageFile:
             exif = dict(img._getexif().items())
