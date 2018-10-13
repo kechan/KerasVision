@@ -193,7 +193,7 @@ class ZoomAndFocusModel(keras.Model):
 
 	# get the absolute coordinate in order to crop the actual image
         abs_crop_coords = np.round((crop_coords * np.concatenate([orig_img_size, orig_img_size], axis=-1))).astype(np.int)
-	print("abs_crop_coords: {}".format(abs_crop_coords))
+        print("abs_crop_coords: {}".format(abs_crop_coords))
 
 	# crop the box out from the original image
         x_ = x[0]
