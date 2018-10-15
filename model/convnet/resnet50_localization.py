@@ -87,7 +87,7 @@ def resnet50_localization(input_shape=None, conv_base_source=None, params=None, 
     else:
         return ModelType(inputs=X_input, outputs=out)
 
-def resnet50_localization_regression(input_shape=None, conv_base_source=None, params=None, ModelType=None):
+def resnet50_localization_regression(input_shape=None, conv_base_source=None, params=None, num_top_conv2d=1, ModelType=None):
     ''' Build a ResNet50 based convnet that output classification and bounding box related info 
         The custom layer EvaluateOutputs is needed as final layer to get the observed prediction.
 
@@ -120,7 +120,13 @@ def resnet50_localization_regression(input_shape=None, conv_base_source=None, pa
     else:
         dropout = 0.0
 
+        for k in range(num_top_conv2d-1):
+        name = "t_conv2d_{}".format(k) 
+        X = Dropout(dropout)(X)
+        X = Conv2D(256, (1, 1), activation='relu', name=name)(X)
+
     # model with linear activation output
+
     X = Dropout(dropout)(X)
     out = Conv2D(10, (1, 1), name='t_output')(X)
     out = Reshape((-1,))(out)
