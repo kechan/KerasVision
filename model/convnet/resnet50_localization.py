@@ -120,7 +120,7 @@ def resnet50_localization_regression(input_shape=None, conv_base_source=None, pa
     else:
         dropout = 0.0
 
-        for k in range(num_top_conv2d-1):
+    for k in range(num_top_conv2d-1):
         name = "t_conv2d_{}".format(k) 
         X = Dropout(dropout)(X)
         X = Conv2D(256, (1, 1), activation='relu', name=name)(X)
