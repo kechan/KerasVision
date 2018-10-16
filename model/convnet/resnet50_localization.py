@@ -368,6 +368,8 @@ def error_analysis_summary_print(y_true, y_pred, filenames=None, iou_score_thres
     
     num_samples = len(joint_accuracy)
 
+    print("General Error Summary:\n")
+    print("----------------------\n")
     print("{} errors and accuracy is {:.2f}%".format(np.sum(1. - joint_accuracy), np.sum(joint_accuracy)/num_samples*100.))
     print("")
 
