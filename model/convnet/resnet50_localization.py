@@ -103,7 +103,7 @@ def resnet50_localization_regression(input_shape=None, conv_base_source=None, pa
 
     '''
     if conv_base_source is None:
-        conv_base = ResNet50(weights='imagenet', include_top=False) 
+        conv_base = ResNet50(weights='imagenet', include_top=False, input_shape = input_shape) 
     else:
         src_model = load_model(conv_base_source)
         conv_base = src_model.get_layer('resnet50')
@@ -121,13 +121,12 @@ def resnet50_localization_regression(input_shape=None, conv_base_source=None, pa
         dropout = 0.0
 
     for k in range(num_top_conv2d-1):
-        name = "t_conv2d_{}".format(k) 
-        X = Dropout(dropout)(X)
-        X = Conv2D(256, (1, 1), activation='relu', name=name)(X)
+        X = Dropout(dropout, name="dropout_after_t_conv2d_{}".format(k))(X)
+        X = Conv2D(256, (1, 1), activation='relu', name="t_conv2d_{}".format(k))(X)
 
     # model with linear activation output
 
-    X = Dropout(dropout)(X)
+    #X = Dropout(dropout)(X)
     out = Conv2D(10, (1, 1), name='t_output')(X)
     out = Reshape((-1,))(out)
 
