@@ -35,6 +35,7 @@ def resnet50_localization(input_shape=None, conv_base_source=None, params=None, 
     input_shape : Input shape of image e.g. (224, 224, 3) 
     conv_base_source : source model file (h5) path from which the 'resnet50' layer will be used
     params : others
+    ModelType: the Model type to return (can be a subclass of keras.models.Model
 
     Returns
     -------
@@ -96,6 +97,7 @@ def resnet50_localization_regression(input_shape=None, conv_base_source=None, pa
     input_shape : Input shape of image e.g. (224, 224, 3) 
     conv_base_source : source model file (h5) path from which the 'resnet50' layer will be used
     params : others
+    ModelType: the Model type to return (can be a subclass of keras.models.Model
 
     Returns
     -------
@@ -169,6 +171,25 @@ def install_head_resnet50_localization_regression(model, ModelType=None):
     else:
         return ModelType(inputs = model.input, outputs = out)
 
+def _install_head_resnet50_localization_regression(self, ModelType=None):
+    '''
+    Add a layer to evaluate interpretable predictions (class probabilities, location, size) 
+
+    Parameters
+    ----------
+    input_shape : Input shape of image e.g. (224, 224, 3) 
+    conv_base_source : source model file (h5) path from which the 'resnet50' layer will be used
+    params : others
+    ModelType: the Model type to return (can be a subclass of keras.models.Model
+
+    Returns
+    -------
+    Keras model
+
+    '''
+    return install_head_resnet50_localization_regression(self, ModelType=ModelType)
+
+Model.with_head = _install_head_resnet50_localization_regression
 
 class ZoomAndFocusModel(keras.Model):
     def __init__(self, padding_ratio=1.0, **kwargs):
