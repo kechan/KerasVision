@@ -123,7 +123,7 @@ def resnet50_localization_regression(input_shape=None, conv_base_source=None, pa
         dropout = 0.0
 
     for k in range(num_top_conv2d-1):
-        X = Dropout(dropout, name="dropout_after_t_conv2d_{}".format(k))(X)
+        X = Dropout(dropout, name="dropout_before_t_conv2d_{}".format(k))(X)
         X = Conv2D(256, (1, 1), activation='relu', name="t_conv2d_{}".format(k))(X)
 
     # model with linear activation output
