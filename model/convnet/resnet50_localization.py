@@ -145,11 +145,11 @@ class EvaluateOutputs(keras.layers.Layer):
         super(EvaluateOutputs, self).__init__(**kwargs)
         
     def call(self, inputs):
-        p_o = K.sigmoid(inputs[:, 0:1])
-        p_c = K.softmax(inputs[:, 4:])
+        p_o = K.sigmoid(inputs[..., 0:1])
+        p_c = K.softmax(inputs[..., 4:])
         
-        b_xy = K.sigmoid(inputs[:, 1:3])
-        b_r = K.exp(inputs[:, 3:4])
+        b_xy = K.sigmoid(inputs[..., 1:3])
+        b_r = K.exp(inputs[..., 3:4])
         
         return K.concatenate([p_o, b_xy, b_r, p_c], axis=-1)
     
