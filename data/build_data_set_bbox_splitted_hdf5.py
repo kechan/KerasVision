@@ -209,7 +209,7 @@ if __name__ == '__main__':
         indice_classes[str(i)] = c 
 
     #for i, split in enumerate(['train', 'validation', 'test']):
-    for i, split in enumerate(['validation']):
+    for i, split in enumerate(['train']):
 	
         data_path = os.path.join(data_dir, split)
 	if os.path.exists(data_path):

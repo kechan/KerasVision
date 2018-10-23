@@ -147,11 +147,27 @@ class EvaluateOutputs(keras.layers.Layer):
         super(EvaluateOutputs, self).__init__(**kwargs)
         
     def call(self, inputs):
+        conv_dims = K.shape(inputs)[1:3]
+	conv_height_index = K.arange(0, stop=conv_dims[0])
+        conv_width_index = K.arange(0, stop=conv_dims[1])
+        conv_height_index = K.tile(conv_height_index, [conv_dims[1]])
+	conv_width_index = K.tile(K.expand_dims(conv_width_index, 0), [conv_dims[0], 1])
+        
+        conv_width_index = K.flatten(K.transpose(conv_width_index))
+        conv_index = K.transpose(K.stack([conv_height_index, conv_width_index]))
+        conv_index = K.reshape(conv_index, [1, conv_dims[0], conv_dims[1], 2])
+        conv_index = K.cast(conv_index, K.dtype(inputs))
+	conv_dims = K.cast(K.reshape(conv_dims, [1, 1, 1, 2]), K.dtype(inputs))
+
         p_o = K.sigmoid(inputs[..., 0:1])
         p_c = K.softmax(inputs[..., 4:])
         
         b_xy = K.sigmoid(inputs[..., 1:3])
         b_r = K.exp(inputs[..., 3:4])
+
+	# adjust prediction to each spatial grid point
+	b_xy = (b_xy + conv_index) / conv_dims
+	b_r = b_r / conv_dims[..., 0:1]     # conv_dims has height and width, we only need one for a square box assumption
         
         return K.concatenate([p_o, b_xy, b_r, p_c], axis=-1)
     
