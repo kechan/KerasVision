@@ -1,5 +1,10 @@
-import colorsys
+import colorsys, PIL, random
+
+import numpy as np
+
 from PIL import Image, ImageDraw, ImageFont
+import matplotlib.pyplot as plt
+
 
 def generate_colors(class_names):
     hsv_tuples = [(x / float(len(class_names)), 1., 1.) for x in range(len(class_names))]
@@ -52,18 +57,24 @@ def draw_boxes(image, out_scores, out_boxes, out_classes, class_names, colors):
             del draw
 
 
-def visualize_prediction(x, yhat=None, y=None, filename='', model=None, figsize=8):
+def visualize_prediction(x, yhat=None, y=None, classes=None, filename='', model=None, figsize=8, colors=None, return_image=False):
   ''' Handy function to visualize an image and the localization information from prediction and ground truth
   
   Parameters:
   -----------
   x : Single image with shape (height, width, channel)
-  yhat: Single predction with shape (10,) or (n, n, 10), the expected prediction from resnet50_localization_*** model
+  yhat: Single predction with shape (10,) or Multi prediction with shape (n, n, 10), the expected prediction from resnet50_localization_*** model
   y: ground truth, must be same shape as yhat
+  classes: list of classes, in the order of the corresponding label index 
   filename: optional string to display as title of plot 
   model: optional model to perform model.evaluate(...)
   figsize: figure size
+  colors: return from calling generate_colors(classes)
+  return_image: a boolean indicating if the image with bounding boxes should be returned
   '''
+
+  assert classes is not None, "classes should be provided."
+  assert colors is not None, "colors should be provided."
     
   def is_background(y_):
     if y_[0] >= 0.5:
@@ -94,7 +105,7 @@ def visualize_prediction(x, yhat=None, y=None, filename='', model=None, figsize=
   def get_drawing_info(y_):
     if not is_background(y_):
       label_indice = np.argmax(y_[4:]) + 1
-      label_string = indice_classes[str(label_indice)]
+      #label_string = indice_classes[str(label_indice)]
       out_classes = np.array([label_indice])      
       #out_scores = np.array([np.max(y_[4:])])
       #title = "{} \n {}".format(filename, label_string)
@@ -130,6 +141,15 @@ def visualize_prediction(x, yhat=None, y=None, filename='', model=None, figsize=
       pred_score, pred_box, pred_class = get_drawing_info(yhat)
       iou_score = [1.0]
       draw_boxes(image, pred_score, pred_box, pred_class, classes, colors)
+    
+    elif yhat.ndim == 2:
+      n, _ = yhat.shape
+      for i in range(n):
+        yhat_ = yhat[i]
+
+	pred_score, pred_box, pred_class = get_drawing_info(yhat_)
+        iou_score = [1.0]
+        draw_boxes(image, pred_score, pred_box, pred_class, classes, colors)
       
     elif yhat.ndim == 3:
       nrow, ncol, _ = yhat.shape 
@@ -192,3 +212,6 @@ def visualize_prediction(x, yhat=None, y=None, filename='', model=None, figsize=
   plt.xlabel("iou = {}".format(iou_score[0]))
   plt.imshow(image)
   plt.grid(None)
+
+  if return_image:
+    return image

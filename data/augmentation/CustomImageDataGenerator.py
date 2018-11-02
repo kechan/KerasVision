@@ -1,4 +1,5 @@
 import numpy as np
+import PIL
 from skimage import exposure, img_as_int
 from keras.preprocessing.image import ImageDataGenerator
 from keras.preprocessing import image
@@ -271,4 +272,32 @@ def perform_cut_out(im, n_holes=0, length=0, prob=0.5):
         im = (im * mask).astype('uint8')
 
     return im
+
+def perform_center_crop(x, min_size=None):
+    """ Returns a center crop of an image"""
+    n_row, n_col, _ = x.shape
+
+    if min_size is None:
+        min_size = np.min(n_row, n_col)
+
+    start_r = np.ceil((n_row - min_size)/2.).astype('int')
+    start_c = np.ceil((n_col - min_size)/2.).astype('int')
+    
+    return crop(x, start_r, start_c, min_size)
+
+
+def crop(x, r, c, size):
+    return x[r:r+size, c:c+size]
+
+def _pil_center_crop(self):
+
+    width, height = self.size
+    min_size = min(height, width)
+
+    start_r = int(np.ceil((height - min_size)/2.))
+    start_c = int(np.ceil((width - min_size)/2.))
+
+    return self.crop((start_c, start_r, start_c+min_size, start_r+min_size))
+
+PIL.Image.Image.center_crop = _pil_center_crop
 

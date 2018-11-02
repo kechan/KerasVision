@@ -207,6 +207,42 @@ def _install_head_resnet50_localization_regression(self, ModelType=None):
 
 Model.with_head = _install_head_resnet50_localization_regression
 
+def _avg_pool_stride_one(self):
+  input_layer = self.get_layer('resnet50').layers[0]
+  layer_right_b4_avg_pool = self.get_layer('resnet50').layers[-2]
+
+  # construct new avg_pool that has a strides of (1, 1)
+  avg_pool_layer = self.get_layer('resnet50').get_layer('avg_pool')
+  avg_pool_layer_config = avg_pool_layer.get_config()
+  avg_pool_layer_config['strides'] = (1, 1)
+  new_avg_pool_layer = avg_pool_layer.from_config(avg_pool_layer_config)
+
+  #X = AveragePooling2D(pool_size=(7, 7), strides=(1, 1), name='avg_pool')(layer_right_b4_avg_pool.output)
+
+  X = new_avg_pool_layer(layer_right_b4_avg_pool.output)
+  
+  # get dropout config
+  dropout = self.get_layer("dropout_before_t_conv2d_{}".format(0)).get_config()['rate']
+
+  X = Dropout(dropout, name="dropout_before_t_conv2d_{}".format(0))(X)
+
+  X = Conv2D(256, (1, 1), activation='relu', name="t_conv2d_{}".format(0))(X)
+
+  out = Conv2D(10, (1, 1), name='t_output')(X)
+
+  avg_pool_stride_one_model = Model(inputs=input_layer.input, outputs=out)
+  
+  # copy the weights for last 2 conv2d layers
+  name = "t_conv2d_{}".format(0)
+  avg_pool_stride_one_model.get_layer(name).set_weights(self.get_layer(name).get_weights())
+  avg_pool_stride_one_model.get_layer("t_output").set_weights(self.get_layer("t_output").get_weights())
+  
+  return avg_pool_stride_one_model
+
+
+Model.with_avg_pool_stride_one = _avg_pool_stride_one
+
+
 class ZoomAndFocusModel(keras.Model):
     def __init__(self, padding_ratio=1.0, **kwargs):
         super(ZoomAndFocusModel, self).__init__(name='zoom_and_focus_model', **kwargs)
@@ -343,6 +379,36 @@ class ZoomAndFocusModel(keras.Model):
  
 
         return y_pred
+
+def regression_model_with_input_shape(input_shape=None, dropout=0.0, ModelType=None):
+  ''' Return a model with a specified input_shape. If no input shape is specified, the net effect is removal of
+  the last Reshape layer, resulting in a model with output shape like (batch, N, N, 10) compared with original (batch, 10)
+ 
+  '''
+
+  if input_shape is not None:
+    width, height, channel = input_shape
+  else:
+    width, height, channel = None, None, 3
+
+  conv_base = ResNet50(weights='imagenet', include_top=False, input_shape=(height, width, 3))
+
+  X_input = Input((height, width, 3), name='input')
+  X = conv_base(X_input)
+
+  X = Dropout(dropout, name="dropout_before_t_conv2d_{}".format(0))(X)
+  X = Conv2D(256, (1, 1), activation='relu', name="t_conv2d_{}".format(0))(X)
+
+  #X = Dropout(dropout)(X)
+  #out = Conv2D(10, (1, 1), kernel_regularizer=keras.regularizers.l2(0.0005), name='t_output')(X)
+  out = Conv2D(10, (1, 1), name='t_output')(X)
+
+  if ModelType is None:
+    return Model(inputs = X_input, outputs = out) 
+  else:
+    return ModelType(inputs = X_input, outputs = out)
+
+
 
 # For error analysis
 def L_acc_by_parts(y_true, y_pred, iou_score_threshold=0.6):
