@@ -15,7 +15,7 @@ def generate_colors(class_names):
     random.seed(None)  # Reset seed to default.
     return colors
 
-def draw_boxes(image, out_scores, out_boxes, out_classes, class_names, colors):
+def draw_boxes(image, out_scores, out_boxes, out_classes, class_names, colors, print_debug=True):
     
     #font = ImageFont.truetype(font='font/FiraMono-Medium.otf',size=np.floor(3e-2 * image.size[1] + 0.5).astype('int32'))
     #font = ImageFont.truetype(font='/Library/Fonts/Microsoft/Arial.ttf',size=np.floor(3e-2 * image.size[1] + 0.5).astype('int32'))
@@ -40,8 +40,9 @@ def draw_boxes(image, out_scores, out_boxes, out_classes, class_names, colors):
         left = max(0, np.floor(left + 0.5).astype('int32'))
         bottom = min(image.size[1], np.floor(bottom + 0.5).astype('int32'))
         right = min(image.size[0], np.floor(right + 0.5).astype('int32'))
-        
-        print("{} ({}, {}), ({}, {})".format(label, left, top, right, bottom))
+ 
+        if print_debug:
+            print("{} ({}, {}), ({}, {})".format(label, left, top, right, bottom))
         
         if predicted_class != "UNK":    # don't draw background prediction
             if top - label_size[1] >= 0:
@@ -57,7 +58,7 @@ def draw_boxes(image, out_scores, out_boxes, out_classes, class_names, colors):
             del draw
 
 
-def visualize_prediction(x, yhat=None, y=None, classes=None, filename='', model=None, figsize=8, colors=None, return_image=False):
+def visualize_prediction(x, yhat=None, y=None, classes=None, filename='', model=None, figsize=8, colors=None, return_image=False, print_debug=True):
   ''' Handy function to visualize an image and the localization information from prediction and ground truth
   
   Parameters:
@@ -75,6 +76,8 @@ def visualize_prediction(x, yhat=None, y=None, classes=None, filename='', model=
 
   assert classes is not None, "classes should be provided."
   assert colors is not None, "colors should be provided."
+
+  iou_score = None
     
   def is_background(y_):
     if y_[0] >= 0.5:
@@ -140,16 +143,16 @@ def visualize_prediction(x, yhat=None, y=None, classes=None, filename='', model=
     if yhat.ndim == 1:
       pred_score, pred_box, pred_class = get_drawing_info(yhat)
       iou_score = [1.0]
-      draw_boxes(image, pred_score, pred_box, pred_class, classes, colors)
+      draw_boxes(image, pred_score, pred_box, pred_class, classes, colors, print_debug)
     
     elif yhat.ndim == 2:
       n, _ = yhat.shape
       for i in range(n):
         yhat_ = yhat[i]
 
-	pred_score, pred_box, pred_class = get_drawing_info(yhat_)
+        pred_score, pred_box, pred_class = get_drawing_info(yhat_)
         iou_score = [1.0]
-        draw_boxes(image, pred_score, pred_box, pred_class, classes, colors)
+        draw_boxes(image, pred_score, pred_box, pred_class, classes, colors, print_debug)
       
     elif yhat.ndim == 3:
       nrow, ncol, _ = yhat.shape 
@@ -160,7 +163,7 @@ def visualize_prediction(x, yhat=None, y=None, classes=None, filename='', model=
         
           pred_score, pred_box, pred_class = get_drawing_info(yhat_)
           iou_score = [1.0]
-          draw_boxes(image, pred_score, pred_box, pred_class, classes, colors)
+          draw_boxes(image, pred_score, pred_box, pred_class, classes, colors, print_debug)
       
   elif yhat is not None and y is not None:
   
@@ -174,7 +177,7 @@ def visualize_prediction(x, yhat=None, y=None, classes=None, filename='', model=
   
       iou_score = iou(pred_box[..., :2], pred_box[..., 2:], true_box[..., :2], true_box[..., 2:])
   
-      draw_boxes(image, out_scores, out_boxes, out_classes, classes, colors)
+      draw_boxes(image, out_scores, out_boxes, out_classes, classes, colors, print_debug)
     
     elif yhat.ndim == 3 and y.ndim == 3:
       nrow, ncol, _ = yhat.shape 
@@ -193,7 +196,7 @@ def visualize_prediction(x, yhat=None, y=None, classes=None, filename='', model=
   
           iou_score = iou(pred_box[..., :2], pred_box[..., 2:], true_box[..., :2], true_box[..., 2:])
   
-          draw_boxes(image, out_scores, out_boxes, out_classes, classes, colors)
+          draw_boxes(image, out_scores, out_boxes, out_classes, classes, colors, print_debug)
         
     else:
       print("Unexpected dimensions for yhat and/or y. Please ensure they have same ndim of either 1 or 3")
@@ -209,7 +212,8 @@ def visualize_prediction(x, yhat=None, y=None, classes=None, filename='', model=
       plt.ylabel("WRONG Prediction")
       
   plt.title(title_string)
-  plt.xlabel("iou = {}".format(iou_score[0]))
+  if iou_score is not None:
+    plt.xlabel("iou = {}".format(iou_score[0]))
   plt.imshow(image)
   plt.grid(None)
 

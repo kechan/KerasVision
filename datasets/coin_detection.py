@@ -10,9 +10,19 @@ from keras.utils import to_categorical
 
 #from visualization.localization import generate_colors, draw_boxes, visualize_prediction
 
-class MultiCoinImageGenerator:
+class MultiCoinArtificialImageGenerator:
+  ''' Synthetic image generator ''' 
   
   def __init__(self, coin_collection_config, template_dir, canvas_file_path, canvas_size=None, iou_threshold=0.2):
+
+    '''
+    Parameters:
+    -----------
+    coin_collection_config: a dictionary of config, see the 'Coin Image Synthesis' notebook for example
+    template_dir: directories where template pngs/jpegs are found 
+    canvas_file_path: full path to canvas jpg or png file
+
+    '''
         
     coin_files = [os.path.join(template_dir, c['filename']) for c in coin_collection_config]
     
@@ -45,8 +55,25 @@ class MultiCoinImageGenerator:
     self.canvas = canvas
     self.canvas_size = canvas_size
     self.iou_threshold = iou_threshold
+
+    # private stuff
+    self._max_num_of_random_coin_sampling_allowed = 100
     
   def generate_single_image(self, num_of_coins_in_image):
+
+    ''' Output a single image with size equal to that of the canvas
+
+    Parameters:
+    -----------
+    num_of_coins_in_image: number of coins appearing in the generated image
+
+
+    Returns:
+    --------
+    image: the canvas image with coins superimposed.
+    y: list of box params in a single array
+    z: label (index, not 1-hot) for tracking full identity of the coins (i.e. resolving identity of the 5_10_25c_heads).
+    '''
     
     #num_of_coins = np.random.randint(max_num_of_coins) + 1
     
@@ -65,6 +92,7 @@ class MultiCoinImageGenerator:
     
     for i in range(num_of_coins_in_image):
     
+      trial = 0
       while True:
         # choose a random position on canvas (rescaled to 1.0)
         c_xy = np.random.uniform(0.1, 0.9, size=(2, 1))
@@ -84,8 +112,17 @@ class MultiCoinImageGenerator:
         pt_at_top_left = np.maximum(g_xy - coin_size/2., 0)
         pt_at_bottom_right = np.minimum(self.canvas_size, g_xy + coin_size/2.)
     
+	trial += 1
+	if trial > self._max_num_of_random_coin_sampling_allowed:
+	  abort_due_to_too_many_trials = True
+	  break
+
         if not self.has_overlapped(top_left_all, bottom_right_all, pt_at_top_left, pt_at_bottom_right):
+	  abort_due_to_too_many_trials = False
           break
+
+      if abort_due_to_too_many_trials:
+        break
 
       # print("{}th coin chosen...".format(i))
       # 1) figure out if the choosen coin is overlapping with an existing coin
@@ -163,7 +200,25 @@ class MultiCoinImageGenerator:
     
 
 
-def generate_h5_dataset(image_generator, dataset_size, desired_image_size, outfile, set_x_name='train_set_x', set_y_name='train_set_y', set_z_name=None, max_coins_per_image=10):
+def generate_h5_dataset(image_generators, dataset_size, desired_image_size, outfile, set_x_name='train_set_x', set_y_name='train_set_y', set_z_name=None, max_coins_per_image=10):
+  ''' Using the passed in image generator(s), prepare a dataset in h5py format for training a detection model 
+
+  Parameters:
+  -----------
+  image_generators: either a single instance of ImageGenerator or a tuple of them. In case of tuple, ImageGenerators will be sampled uniformly.
+  dataset_size: an Int, the number of images to be generated for the dataset
+  desired_image_size: an Int, images are square with this size.
+  outfile: full path to the output filename (the .h5py)
+  set_x_name: a string to name the "X" dataset
+  set_y_name: a string to name the "Y" dataset
+  set_z_name: a string to name the "Z" dataset (this is ground truth label)
+  max_coins_per_image: maximum number of objects superimposed on each image.
+
+  Returns:
+  -------
+  None: dataset will be written to the .h5py file
+
+  '''
 
   data_shape = (dataset_size, desired_image_size, desired_image_size, 3)
   vlen_int_dt = h5py.special_dtype(vlen=np.dtype(int))  # variable length default int
@@ -186,8 +241,18 @@ def generate_h5_dataset(image_generator, dataset_size, desired_image_size, outfi
   if use_z:
     set_z = h5_file.create_dataset(set_z_name, shape=(dataset_size, ), dtype=vlen_int_dt)
 
+  num_of_image_generators = len(image_generators) if type(image_generators) == tuple else 1
+
+  def dynamic_image_generators(n):
+    if n == 1:
+      return image_generators
+    else:
+      img_generator_idx = np.random.randint(n)
+      return image_generators[img_generator_idx]
+
   for i in range(dataset_size):
-    img, y, z = image_generator.generate_single_image(np.random.randint(max_coins_per_image)+1)
+    img_generator = dynamic_image_generators(num_of_image_generators)
+    img, y, z = img_generator.generate_single_image(np.random.randint(max_coins_per_image)+1)
     img = PIL.Image.fromarray(img).resize((desired_image_size, desired_image_size), PIL.Image.BICUBIC)
     img = np.array(img)
 
@@ -196,6 +261,6 @@ def generate_h5_dataset(image_generator, dataset_size, desired_image_size, outfi
 
     if use_z:
       set_z[i, ...] = z
- 
+
   h5_file.close()
   

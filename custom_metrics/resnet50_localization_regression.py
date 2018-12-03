@@ -3,6 +3,8 @@ from keras.metrics import categorical_accuracy
 from keras.utils.generic_utils import get_custom_objects
 
 def L_acc(y_true, y_pred):
+    # Localization accuracy: a match is registered only if class is correctly identified with IOU > 0.6
+ 
     # Confidence component (aka objectness)
     
     y_true_confidence = y_true[:, 0]

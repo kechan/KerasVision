@@ -9,6 +9,7 @@ from keras.models import load_model
 from keras.layers import Conv2D, Dropout, Concatenate, Reshape
 from keras.layers import BatchNormalization, Activation
 from keras.layers import Input, Lambda
+from keras.layers import AveragePooling2D
 
 from keras.applications import ResNet50
 import keras.backend as K
@@ -148,16 +149,16 @@ class EvaluateOutputs(keras.layers.Layer):
         
     def call(self, inputs):
         conv_dims = K.shape(inputs)[1:3]
-	conv_height_index = K.arange(0, stop=conv_dims[0])
+        conv_height_index = K.arange(0, stop=conv_dims[0])
         conv_width_index = K.arange(0, stop=conv_dims[1])
         conv_height_index = K.tile(conv_height_index, [conv_dims[1]])
-	conv_width_index = K.tile(K.expand_dims(conv_width_index, 0), [conv_dims[0], 1])
+        conv_width_index = K.tile(K.expand_dims(conv_width_index, 0), [conv_dims[0], 1])
         
         conv_width_index = K.flatten(K.transpose(conv_width_index))
         conv_index = K.transpose(K.stack([conv_height_index, conv_width_index]))
         conv_index = K.reshape(conv_index, [1, conv_dims[0], conv_dims[1], 2])
         conv_index = K.cast(conv_index, K.dtype(inputs))
-	conv_dims = K.cast(K.reshape(conv_dims, [1, 1, 1, 2]), K.dtype(inputs))
+        conv_dims = K.cast(K.reshape(conv_dims, [1, 1, 1, 2]), K.dtype(inputs))
 
         p_o = K.sigmoid(inputs[..., 0:1])
         p_c = K.softmax(inputs[..., 4:])
@@ -166,8 +167,8 @@ class EvaluateOutputs(keras.layers.Layer):
         b_r = K.exp(inputs[..., 3:4])
 
 	# adjust prediction to each spatial grid point
-	b_xy = (b_xy + conv_index) / conv_dims
-	b_r = b_r / conv_dims[..., 0:1]     # conv_dims has height and width, we only need one for a square box assumption
+        b_xy = (b_xy + conv_index) / conv_dims
+        b_r = b_r / conv_dims[..., 0:1]     # conv_dims has height and width, we only need one for a square box assumption
         
         return K.concatenate([p_o, b_xy, b_r, p_c], axis=-1)
     
@@ -206,6 +207,20 @@ def _install_head_resnet50_localization_regression(self, ModelType=None):
     return install_head_resnet50_localization_regression(self, ModelType=ModelType)
 
 Model.with_head = _install_head_resnet50_localization_regression
+
+def install_final_activation_layer(model, activation_layer, ModelType=None):
+    out = activation_layer()(model.output)        #TODO: Why can't name be added here??
+    if ModelType is None:
+        return Model(inputs = model.input, outputs = out)
+    else:
+        return ModelType(inputs = model.input, outputs = out) 
+
+def _install_final_activation_layer(self, activation_layer, ModelType=None):
+    ''' Add a final activation layer to the model and return it '''
+    return install_final_activation_layer(self, activation_layer, ModelType=ModelType)
+
+
+Model.with_final_activation_layer = _install_final_activation_layer
 
 def _avg_pool_stride_one(self):
   input_layer = self.get_layer('resnet50').layers[0]
@@ -380,7 +395,7 @@ class ZoomAndFocusModel(keras.Model):
 
         return y_pred
 
-def regression_model_with_input_shape(input_shape=None, dropout=0.0, ModelType=None):
+def regression_model_with_input_shape(input_shape=None, dropout=0.0, avg_pool_stride=(7, 7), ModelType=None):
   ''' Return a model with a specified input_shape. If no input shape is specified, the net effect is removal of
   the last Reshape layer, resulting in a model with output shape like (batch, N, N, 10) compared with original (batch, 10)
  
@@ -395,6 +410,10 @@ def regression_model_with_input_shape(input_shape=None, dropout=0.0, ModelType=N
 
   X_input = Input((height, width, 3), name='input')
   X = conv_base(X_input)
+
+  # Keras 2.2.4, ResNet50(include_top=False) does not have avg_pool in the last layer.
+  # we will add it back in here. This is actually better flexible design. 
+  X = AveragePooling2D(name='avg_pool', pool_size=(7, 7), strides=avg_pool_stride, padding='valid')(X)
 
   X = Dropout(dropout, name="dropout_before_t_conv2d_{}".format(0))(X)
   X = Conv2D(256, (1, 1), activation='relu', name="t_conv2d_{}".format(0))(X)

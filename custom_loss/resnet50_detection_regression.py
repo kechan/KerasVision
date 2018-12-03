@@ -4,6 +4,10 @@ from keras.utils.generic_utils import get_custom_objects
 
 from model.convnet.resnet50_detection import generate_conv_index_conv_dim
 
+conv_height, conv_width = 9, 9
+conv_index, conv_dims = generate_conv_index_conv_dim(conv_height, conv_width)
+
+
 def inv_preprocess_true_boxes(detectors_mask, matching_true_boxes, conv_index, conv_dims, max_boxes=1):
   
   max_boxes_tensor = K.variable(max_boxes, dtype='int32')
@@ -20,7 +24,7 @@ def inv_preprocess_true_boxes(detectors_mask, matching_true_boxes, conv_index, c
   N = K.shape(matching_true_boxes)[0]
   
   #recovered_boxes = K.zeros((N, max_boxes, 9), dtype=K.floatx())              # sample, n_boxes, n_params
-  recovered_boxes_ist = []
+  #recovered_boxes_ist = []
 
   def padzero(x):
     matching_true_box = x[0]
@@ -61,12 +65,10 @@ def transform_predicted_from_t_to_actual(t_pred, conv_index, conv_dims):
   
   return pred_xy, pred_r
 
-conv_height, conv_width = 9, 9
-conv_index, conv_dims = generate_conv_index_conv_dim(conv_height, conv_width)
 
 def obj_detection_loss(y_true, y_pred):
 
-  max_boxes = 10
+  max_boxes = 20
   object_scale = 5.
   no_object_scale = 1.
   class_scale = 1.
