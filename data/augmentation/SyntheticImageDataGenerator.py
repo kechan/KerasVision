@@ -2,7 +2,7 @@ import numpy as np
 from keras.preprocessing.image import Iterator, ImageDataGenerator
 
 #from datasets.coin_detection import MultiCoinArtificialImageGenerator
-from model.convnet.resnet50_detection import preprocess_true_boxes
+from model.convnet.detection import preprocess_true_boxes
 
 
 import PIL

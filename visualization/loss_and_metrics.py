@@ -20,6 +20,23 @@ def plot_training_loss(history):
   plt.legend(loc='best')
   plt.grid()
 
+def plot_train_and_val_loss(history):
+
+  loss = history['loss']
+  val_loss = history['val_loss']
+
+  epochs = range(len(loss))
+
+  # Plotting Loss vs Epoch curve
+  plt.figure(figsize=(8, 8))
+
+  plt.plot(epochs, loss, 'bo', label='Training loss')
+  plt.plot(epochs, val_loss, 'b', label='Validation loss')
+  plt.title('Training and validation loss')
+  #plt.legend()
+  plt.legend(loc='best')
+  plt.grid()
+
 def plot_loss_accuracy(history):
   acc = history['acc']
   val_acc = history['val_acc']

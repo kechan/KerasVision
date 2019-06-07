@@ -5,17 +5,25 @@ from keras import backend as K
 from keras.metrics import categorical_accuracy
 from keras.utils.generic_utils import get_custom_objects
 
-from model.convnet.resnet50_detection import generate_conv_index_conv_dim, generate_numpy_conv_index_conv_dim
-from model.convnet.resnet50_detection import yolo_boxes_to_corners as numpy_yolo_boxes_to_corners
+from model.convnet.detection import generate_conv_index_conv_dim, generate_numpy_conv_index_conv_dim
+from model.convnet.detection import yolo_boxes_to_corners as numpy_yolo_boxes_to_corners
 
-from model.convnet.resnet50_detection import eval as numpy_eval
+from model.convnet.detection import eval as numpy_eval
 
-from model.convnet.resnet50_localization import EvaluateOutputs
+from model.convnet.localization import EvaluateOutputs
 
 
 # global hack, how to arrange to pass this into the metric method (which only takes y_true and y_pred as argument 
-image_shape = (453, 453)
+
+
+# ResNet50
+image_shape = (453, 453)    
 conv_height, conv_width = 9, 9
+
+# mobilenet
+# image_shape = (447, 447)
+# conv_height, conv_width = 7, 7
+
 conv_index, conv_dims = generate_conv_index_conv_dim(conv_height, conv_width)
 np_conv_index, np_conv_dims = generate_numpy_conv_index_conv_dim(conv_height, conv_width)
 

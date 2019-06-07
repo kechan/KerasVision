@@ -13,7 +13,7 @@ from keras.preprocessing.image import array_to_img
 from PIL import ImageDraw, ImageFont, ImageFilter
 from skimage import exposure, img_as_int
 
-from model.convnet.resnet50_detection import preprocess_true_boxes
+from model.convnet.detection import preprocess_true_boxes
 
 #from .CustomImageDataGenerator import perform_rot90_with_tracking, perform_gaussian_blur_range, perform_color_shift, perform_contrast_stretching, perform_histogram_equalization, perform_adaptive_equalization, perform_cut_out
 
@@ -462,6 +462,8 @@ class DirectoryWithRandomSelectionCroppingIterator(Iterator):
                                                                            )
 
     def _get_batches_of_transformed_samples(self, index_array):
+
+        #print("index_array: {}".format(index_array))
 
         def swap(a, i, j):    # swap the column i and j of a[]
             tmp = np.copy(a[..., i])

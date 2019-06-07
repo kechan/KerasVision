@@ -11,7 +11,7 @@ from keras.layers import BatchNormalization, Activation
 from keras.layers import Input, Lambda
 from keras.layers import AveragePooling2D
 
-from keras.applications import ResNet50
+from keras.applications import ResNet50, MobileNet
 import keras.backend as K
 
 from keras.utils.generic_utils import get_custom_objects
@@ -28,7 +28,7 @@ def exp_activation(X):
   return K.exp(X)
 
 
-def resnet50_localization(input_shape=None, conv_base_source=None, params=None, ModelType=None):
+def localization(application='ResNet50', input_shape=None, weights=None, params=None, ModelType=None):
     ''' Build a ResNet50 based convnet that output classification and bounding box info 
 
     Parameters
@@ -46,11 +46,17 @@ def resnet50_localization(input_shape=None, conv_base_source=None, params=None, 
     
     get_custom_objects().update({'exp_activation': Exp(exp_activation)})
 
-    if conv_base_source is None:
-        conv_base = ResNet50(weights='imagenet', include_top=False) 
+    if weights is None:
+        if application == 'ResNet50':
+            conv_base = ResNet50(weights='imagenet', include_top=False) 
+        elif application == 'MobileNet':
+            conv_base = MobileNet(weights='imagenet', include_top=False)
     else:
-        src_model = load_model(conv_base_source)
-        conv_base = src_model.get_layer('resnet50')
+        src_model = load_model(weights)
+        if application == 'ResNet50':
+            conv_base = src_model.get_layer('resnet50')
+        elif application == 'MobileNet':
+            conv_base = src_model.get_layer('mobilenet_1.00_224')
 
     if input_shape is None:
         X_input = Input((None, None, 3))
@@ -395,7 +401,7 @@ class ZoomAndFocusModel(keras.Model):
 
         return y_pred
 
-def regression_model_with_input_shape(input_shape=None, dropout=0.0, avg_pool_stride=(7, 7), ModelType=None):
+def regression_model_with_input_shape(application='ResNet50', input_shape=None, dropout=0.0, avg_pool_stride=(7, 7), ModelType=None):
   ''' Return a model with a specified input_shape. If no input shape is specified, the net effect is removal of
   the last Reshape layer, resulting in a model with output shape like (batch, N, N, 10) compared with original (batch, 10)
  
@@ -406,7 +412,10 @@ def regression_model_with_input_shape(input_shape=None, dropout=0.0, avg_pool_st
   else:
     width, height, channel = None, None, 3
 
-  conv_base = ResNet50(weights='imagenet', include_top=False, input_shape=(height, width, 3))
+  if application == 'ResNet50':
+    conv_base = ResNet50(weights='imagenet', include_top=False, input_shape=(height, width, 3))
+  elif application == 'MobileNet':
+    conv_base = MobileNet(weights='imagenet', include_top=False)
 
   X_input = Input((height, width, 3), name='input')
   X = conv_base(X_input)

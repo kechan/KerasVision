@@ -10,14 +10,14 @@ from keras.layers import Conv2D, Dropout, Concatenate, Reshape
 from keras.layers import BatchNormalization, Activation
 from keras.layers import Input, Lambda
 
-from keras.applications import ResNet50
+from keras.applications import ResNet50, MobileNet
 import keras.backend as K
 
 from keras.utils.generic_utils import get_custom_objects
 
-from .resnet50_localization import regression_model_with_input_shape
+from .localization import regression_model_with_input_shape
 
-def resnet50_detection_regression(input_shape=None, dropout=0.0, avg_pool_stride=(1, 1), weights=None):
+def detection_regression(application='ResNet50', input_shape=None, dropout=0.0, avg_pool_stride=(1, 1), weights=None):
 
   ''' Build a ResNet backboned detection model 
   
@@ -32,7 +32,7 @@ def resnet50_detection_regression(input_shape=None, dropout=0.0, avg_pool_stride
   '''
 
 
-  model = regression_model_with_input_shape(input_shape, dropout=dropout, avg_pool_stride=avg_pool_stride)
+  model = regression_model_with_input_shape(application=application, input_shape=input_shape, dropout=dropout, avg_pool_stride=avg_pool_stride)
   if weights is not None:
     model.load_weights(weights)
 
@@ -113,9 +113,12 @@ def preprocess_true_boxes(set_y, max_boxes=1, conv_height=9, conv_width=9):
         _x = box[0] - j
         _y = box[1] - i
         _r = box[2]
+
+	#print("_x: {}".format(_x))
+	#print("_y: {}".format(_y))
       
-        tmp = [np.log(_x / (1. - _x + K.epsilon())),   # sigmoid^{-1}
-               np.log(_y / (1. - _y + K.epsilon())),   
+        tmp = [np.log((_x / (1. - _x + K.epsilon())) + K.epsilon()),   # sigmoid^{-1}
+               np.log((_y / (1. - _y + K.epsilon())) + K.epsilon()),   
                np.log(_r)]
         tmp.extend(list(box_class))
       
@@ -138,7 +141,7 @@ def preprocess_true_boxes(set_y, max_boxes=1, conv_height=9, conv_width=9):
 
   # since the shape has to match with the model output which is (n, conv_height, conv_width, 10) for 1 box per cell, we will need to 
   # reshape this, and doing so generally for >1 boxes per cell. 
-  set_y_final = set_y_final.reshape((set_y_final.shape[0], 9, 9, -1))
+  set_y_final = set_y_final.reshape((set_y_final.shape[0], conv_height, conv_width, -1))
 
   return set_y_final
 
@@ -293,7 +296,7 @@ def sparse_representation(set_y, max_boxes=1, conv_height=9, conv_width=9):
 
   # since the shape has to match with the model output which is (n, conv_height, conv_width, 10) for 1 box per cell, we will need to 
   # reshape this, and doing so generally for >1 boxes per cell. 
-  set_y_sparse = set_y_sparse.reshape((set_y_sparse.shape[0], 9, 9, -1))
+  set_y_sparse = set_y_sparse.reshape((set_y_sparse.shape[0], conv_height, conv_width, -1))
 
   return set_y_sparse
 

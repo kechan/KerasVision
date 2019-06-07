@@ -32,8 +32,8 @@ class CustomImageDataGenerator(ImageDataGenerator):
 
     def get_random_transform(self, img_shape, seed=None):
 
-        #print("ImageDataGeneratorObjectDetection.get_random_transform(...)")
-        transform_params = super(ImageDataGeneratorObjectDetection, self).get_random_transform(img_shape, seed=seed)
+        #print("CustomImageDataGenerator.get_random_transform(...)")
+        transform_params = super(CustomImageDataGenerator, self).get_random_transform(img_shape, seed=seed)
 
 	# Add extra custom transform params
         if self.rot90:
@@ -75,7 +75,7 @@ class CustomImageDataGenerator(ImageDataGenerator):
 
     def apply_transform(self, x, transform_parameters):
 
-        #print("ImageDataGeneratorObjectDetection.apply_transform(...)")
+        #print("CustomImageDataGenerator.apply_transform(...)")
 
         need_uint8_temporarily = False
         if self.contrast_stretching or self.histogram_equalization or self.adaptive_equalization or self.color_shift or self.cut_out or self.gaussian_blur_range:
@@ -115,7 +115,7 @@ class CustomImageDataGenerator(ImageDataGenerator):
         if need_uint8_temporarily:    # convert back to float32 for the rest of random transforms
             x = x.astype('float32')
 
-        x = super(ImageDataGeneratorObjectDetection, self).apply_transform(x, transform_parameters)
+        x = super(CustomImageDataGenerator, self).apply_transform(x, transform_parameters)
 
         return x
     
