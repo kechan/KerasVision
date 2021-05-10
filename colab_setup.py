@@ -87,6 +87,8 @@ try:
   from common_util import image_d_hash, tf_image_d_hash
   from common_util import count_photos
   from common_util import join_filter_drop_df, tf_dataset_peek
+
+  from common_util import get_image_id_from_image_name
 except Exception as e:
   print(e)
   print("Not installing rlp_dataloader, common_util and small_fastai_utils")
