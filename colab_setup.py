@@ -76,6 +76,8 @@ if bOnColab:
   utils_path = home/project_name/'utils'
   models_dir = home/project_name/'model'
 
+  gs_bucket_name = 'kechan_deep_learning'
+
 try:
   sys.path.insert(0, str(utils_path))
 
