@@ -31,6 +31,7 @@ import tensorflow_datasets as tfds
 from tensorflow.keras.utils import Sequence
 
 from tensorflow.keras.layers import Dense, Input, Embedding, LSTM, Reshape, Dropout, Activation, Dot
+from tensorflow.keras.layers import Conv2D
 from tensorflow.keras.layers import GlobalAveragePooling1D, GlobalAveragePooling2D, Concatenate
 from tensorflow.keras.models import Sequential, Model, load_model
 from tensorflow.keras import backend as K
